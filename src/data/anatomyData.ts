@@ -288,6 +288,46 @@ export const anatomyStructures: AnatomyStructure[] = [
       color: '#D4A373'
     }
   },
+  {
+    id: 'spinal-cord',
+    name: '脊髓',
+    latinName: 'Medulla spinalis',
+    layer: AnatomyLayer.ORGAN,
+    system: BodySystem.NERVOUS,
+    geometry: {
+      type: 'cylinder',
+      position: [0, 0.5, -0.05],
+      scale: [0.05, 1.6, 0.05],
+      rotation: [0, 0, 0],
+      color: '#F5E6D3'
+    }
+  },
+  {
+    id: 'cerebellum',
+    name: '小脑',
+    latinName: 'Cerebellum',
+    layer: AnatomyLayer.ORGAN,
+    system: BodySystem.NERVOUS,
+    geometry: {
+      type: 'ellipsoid',
+      position: [0, 1.9, -0.15],
+      scale: [0.15, 0.1, 0.12],
+      color: '#E8D5B7'
+    }
+  },
+  {
+    id: 'brainstem',
+    name: '脑干',
+    latinName: 'Truncus encephali',
+    layer: AnatomyLayer.ORGAN,
+    system: BodySystem.NERVOUS,
+    geometry: {
+      type: 'capsule',
+      position: [0, 1.85, -0.05],
+      scale: [0.08, 0.2, 0.08],
+      color: '#F0DFC0'
+    }
+  },
 
   // ==================== 骨骼层 ====================
   {

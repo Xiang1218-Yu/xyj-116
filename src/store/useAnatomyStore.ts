@@ -1,6 +1,17 @@
 import { create } from 'zustand';
 import { AnatomyLayer, ANATOMY_LAYER_ORDER, BodySystem } from '../types';
 
+const SYSTEM_TO_LAYER: Record<BodySystem, AnatomyLayer> = {
+  [BodySystem.INTEGUMENTARY]: AnatomyLayer.SKIN,
+  [BodySystem.MUSCULAR]: AnatomyLayer.MUSCLE,
+  [BodySystem.SKELETAL]: AnatomyLayer.SKELETON,
+  [BodySystem.NERVOUS]: AnatomyLayer.ORGAN,
+  [BodySystem.CIRCULATORY]: AnatomyLayer.ORGAN,
+  [BodySystem.RESPIRATORY]: AnatomyLayer.ORGAN,
+  [BodySystem.DIGESTIVE]: AnatomyLayer.ORGAN,
+  [BodySystem.ENDOCRINE]: AnatomyLayer.ORGAN,
+};
+
 interface AnatomyState {
   currentLayer: AnatomyLayer;
   activeSystem: BodySystem | null;
@@ -27,6 +38,14 @@ export const useAnatomyStore = create<AnatomyState>((set, get) => ({
   },
 
   setActiveSystem: (system: BodySystem | null) => {
+    if (system !== null) {
+      const targetLayer = SYSTEM_TO_LAYER[system];
+      const currentIndex = ANATOMY_LAYER_ORDER.indexOf(get().currentLayer);
+      const targetIndex = ANATOMY_LAYER_ORDER.indexOf(targetLayer);
+      if (targetIndex > currentIndex) {
+        get().setCurrentLayer(targetLayer);
+      }
+    }
     set({ activeSystem: system });
   },
 

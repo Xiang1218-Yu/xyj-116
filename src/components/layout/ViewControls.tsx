@@ -39,7 +39,7 @@ export function ViewControls() {
               initial={{ opacity: 0, y: 10, height: 0 }}
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: 10, height: 0 }}
-              className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-3 space-y-2"
+              className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-3 space-y-2 max-h-[70vh] overflow-y-auto custom-scrollbar"
             >
               <p className="text-[10px] text-white/40 font-medium mb-2 px-1">视角切换</p>
               <div className="grid grid-cols-3 gap-1">
