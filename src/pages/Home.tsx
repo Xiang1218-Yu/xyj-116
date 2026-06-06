@@ -1,15 +1,18 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MousePointer2, Layers, Info } from 'lucide-react';
 import { AnatomyScene } from '../components/three/AnatomyScene';
 import { TopNavbar } from '../components/layout/TopNavbar';
 import { LeftControlPanel } from '../components/layout/LeftControlPanel';
 import { RightInfoPanel } from '../components/layout/RightInfoPanel';
 import { ViewControls } from '../components/layout/ViewControls';
+import { QuizPanel } from '../components/layout/QuizPanel';
 import { useSelectionStore } from '../store/useSelectionStore';
+import { useQuizStore } from '../store/useQuizStore';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
   const { selectedStructureId } = useSelectionStore();
+  const { isQuizMode } = useQuizStore();
   const [showWelcome, setShowWelcome] = useState(true);
 
   useEffect(() => {
@@ -30,6 +33,7 @@ export default function Home() {
       <LeftControlPanel />
       <RightInfoPanel />
       <ViewControls />
+      <QuizPanel />
       
       {showWelcome && (
         <motion.div
@@ -59,40 +63,50 @@ export default function Home() {
         </motion.div>
       )}
       
-      <motion.div
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 4.5 }}
-      >
-        <div className="glass px-6 py-3 rounded-full flex items-center gap-6 text-sm text-white/60">
-          <div className="flex items-center gap-2">
-            <MousePointer2 className="w-4 h-4 text-cyan-400" />
-            <span>鼠标拖动旋转</span>
-          </div>
-          <div className="w-px h-4 bg-white/10" />
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-cyan-400" />
-            <span>左侧控制解剖层次</span>
-          </div>
-          <div className="w-px h-4 bg-white/10" />
-          <div className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-cyan-400" />
-            <span>点击结构查看详情</span>
-          </div>
-        </div>
-      </motion.div>
+      <AnimatePresence>
+        {!isQuizMode && (
+          <motion.div
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 20, opacity: 0 }}
+            transition={{ duration: 0.5, delay: 4.5 }}
+          >
+            <div className="glass px-6 py-3 rounded-full flex items-center gap-6 text-sm text-white/60">
+              <div className="flex items-center gap-2">
+                <MousePointer2 className="w-4 h-4 text-cyan-400" />
+                <span>鼠标拖动旋转</span>
+              </div>
+              <div className="w-px h-4 bg-white/10" />
+              <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4 text-cyan-400" />
+                <span>左侧控制解剖层次</span>
+              </div>
+              <div className="w-px h-4 bg-white/10" />
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4 text-cyan-400" />
+                <span>点击结构查看详情</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
-      <motion.div
-        className="absolute top-24 left-1/2 -translate-x-1/2 z-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: selectedStructureId ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="glass px-4 py-2 rounded-xl text-xs text-white/50 text-center max-w-md">
-          💡 提示：点击任意器官（心脏、肺、肝脏、胃、大脑、肾脏等）查看详细的功能说明、常见病变和真实临床案例
-        </div>
-      </motion.div>
+      <AnimatePresence>
+        {!isQuizMode && (
+          <motion.div
+            className="absolute top-24 left-1/2 -translate-x-1/2 z-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: selectedStructureId ? 0 : 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="glass px-4 py-2 rounded-xl text-xs text-white/50 text-center max-w-md">
+              💡 提示：点击任意器官（心脏、肺、肝脏、胃、大脑、肾脏等）查看详细的功能说明、常见病变和真实临床案例
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
