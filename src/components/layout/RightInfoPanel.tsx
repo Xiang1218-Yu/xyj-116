@@ -40,14 +40,14 @@ export function RightInfoPanel() {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 w-80"
+        className="fixed right-4 top-4 bottom-4 z-40 w-80 flex flex-col"
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: 100, opacity: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
       >
-        <GlassPanel variant="elevated" className="max-h-[80vh] overflow-hidden flex flex-col">
-          <div className="flex items-start justify-between mb-4 pb-3 border-b border-white/10">
+        <GlassPanel variant="elevated" padding="none" className="flex-1 overflow-hidden flex flex-col min-h-0">
+          <div className="flex items-start justify-between mb-4 pb-3 border-b border-white/10 p-5 pb-3 flex-shrink-0">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span 
@@ -72,10 +72,10 @@ export function RightInfoPanel() {
             tabs={tabs}
             defaultTab={activeTab}
             onTabChange={setActiveTab}
-            className="mb-4"
+            className="mb-4 px-5 flex-shrink-0"
           />
 
-          <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+          <div className="flex-1 overflow-y-auto custom-scrollbar px-5 pb-5 min-h-0">
             {activeTab === 'function' && organInfo && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
