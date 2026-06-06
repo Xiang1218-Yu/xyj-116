@@ -7,6 +7,7 @@ import { Lighting } from './Lighting';
 import { PostEffects } from './PostEffects';
 import { useViewStore } from '../../store/useViewStore';
 import { useSelectionStore } from '../../store/useSelectionStore';
+import { useSearchStore } from '../../store/useSearchStore';
 
 interface SceneControllerProps {
   autoRotate: boolean;
@@ -46,6 +47,7 @@ function SceneController({ autoRotate, cameraView, isOrthographic }: SceneContro
 
   const handleCanvasClick = () => {
     useSelectionStore.getState().clearSelection();
+    useSearchStore.getState().clearHighlight();
   };
 
   return (
@@ -81,12 +83,18 @@ interface AnatomySceneProps {
 export function AnatomyScene({ className }: AnatomySceneProps) {
   const { autoRotate, cameraView, isOrthographic } = useViewStore();
 
+  const handleBackgroundClick = () => {
+    useSelectionStore.getState().clearSelection();
+    useSearchStore.getState().clearHighlight();
+  };
+
   return (
     <Canvas
       className={className}
       camera={{ position: [0, 0, 5], fov: 45, near: 0.1, far: 100 }}
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
       shadows
+      onClick={handleBackgroundClick}
     >
       <color attach="background" args={['#0A1628']} />
       <fog attach="fog" args={['#0A1628', 8, 20]} />

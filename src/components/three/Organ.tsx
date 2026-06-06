@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { AnatomyStructure, GeometryConfig } from '../../types';
 import { useSelectionStore } from '../../store/useSelectionStore';
 import { useQuizStore } from '../../store/useQuizStore';
+import { useSearchStore } from '../../store/useSearchStore';
 
 interface OrganProps {
   structure: AnatomyStructure;
@@ -33,6 +34,7 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { selectedStructureId, setSelectedStructureId, hoveredStructureId, setHoveredStructureId } = useSelectionStore();
   const { isQuizMode, currentQuestion, lastAnswerResult, lastClickedStructureId, submitAnswer, clearLastResult } = useQuizStore();
+  const { highlightedStructureId, searchResults, clearHighlight } = useSearchStore();
   const [hovered, setHovered] = useState(false);
   const [flashEffect, setFlashEffect] = useState<'correct' | 'wrong' | null>(null);
   
@@ -43,6 +45,8 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
   const showCorrectHighlight = isQuizMode && lastAnswerResult === 'correct' && isLastClicked;
   const showWrongHighlight = isQuizMode && lastAnswerResult === 'wrong' && isLastClicked;
   const showTargetReveal = isQuizMode && lastAnswerResult === 'wrong' && isTargetStructure;
+  const isSearchHighlighted = highlightedStructureId === structure.id;
+  const isInSearchResults = searchResults.includes(structure.id);
 
   useEffect(() => {
     if (showCorrectHighlight) {
@@ -74,6 +78,12 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
     } else if (showTargetReveal) {
       emissiveColor = '#f59e0b';
       emissiveIntensity = 0.5;
+    } else if (isSearchHighlighted) {
+      emissiveColor = '#fbbf24';
+      emissiveIntensity = 0.8;
+    } else if (isInSearchResults) {
+      emissiveColor = '#22c55e';
+      emissiveIntensity = 0.4;
     } else if (isSelected) {
       emissiveColor = '#00bcd4';
       emissiveIntensity = 0.6;
@@ -92,7 +102,7 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
       emissiveIntensity: emissiveIntensity,
     });
     return mat;
-  }, [structure.geometry.color, opacity, isSelected, isHovered, hovered, flashEffect, showCorrectHighlight, showWrongHighlight, showTargetReveal]);
+  }, [structure.geometry.color, opacity, isSelected, isHovered, hovered, flashEffect, showCorrectHighlight, showWrongHighlight, showTargetReveal, isSearchHighlighted, isInSearchResults]);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -106,6 +116,14 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
       } else if (showTargetReveal) {
         const pulseScale = 1 + Math.sin(state.clock.getElapsedTime() * 4) * 0.08;
         meshRef.current.scale.setScalar(pulseScale);
+      } else if (isSearchHighlighted) {
+        const pulseScale = 1 + Math.sin(state.clock.getElapsedTime() * 5) * 0.06;
+        meshRef.current.scale.setScalar(pulseScale);
+        meshRef.current.position.x = 0;
+      } else if (isInSearchResults) {
+        const scale = 1 + Math.sin(state.clock.getElapsedTime() * 2.5) * 0.02;
+        meshRef.current.scale.setScalar(scale);
+        meshRef.current.position.x = 0;
       } else if (isSelected || isHovered || hovered) {
         const scale = 1 + Math.sin(state.clock.getElapsedTime() * 3) * 0.03;
         meshRef.current.scale.setScalar(scale);
@@ -116,7 +134,7 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
       }
     }
     
-    if (groupRef.current && structure.layer === 'organ' && structure.id === 'heart' && !flashEffect && !showCorrectHighlight && !showWrongHighlight) {
+    if (groupRef.current && structure.layer === 'organ' && structure.id === 'heart' && !flashEffect && !showCorrectHighlight && !showWrongHighlight && !isSearchHighlighted) {
       const pulse = 1 + Math.sin(state.clock.getElapsedTime() * 2) * 0.05;
       groupRef.current.scale.setScalar(pulse);
     }
@@ -135,6 +153,10 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
     if (isQuizMode && lastAnswerResult) {
       clearLastResult();
       return;
+    }
+    
+    if (isSearchHighlighted) {
+      clearHighlight();
     }
     
     if (isSelected) {
