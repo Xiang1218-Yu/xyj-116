@@ -185,6 +185,11 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
 
   const handleClick = (e: any) => {
     e.stopPropagation();
+    if (e.nativeEvent) {
+      e.nativeEvent.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+    }
+    (e as any)._isOrganClick = true;
     
     if (isQuizMode && currentQuestion && !lastAnswerResult) {
       submitAnswer(structure.id);

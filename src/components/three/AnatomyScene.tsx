@@ -130,7 +130,8 @@ function SceneController({ autoRotate, cameraView }: SceneControllerProps) {
     }
   }, [cameraView, camera, isIsolated]);
 
-  const handleCanvasClick = () => {
+  const handleCanvasClick = (e: any) => {
+    if (e._isOrganClick) return;
     if (!isAnnotationMode) {
       useSelectionStore.getState().clearSelection();
       useSearchStore.getState().clearHighlight();
@@ -196,7 +197,8 @@ export function AnatomyScene({ className }: AnatomySceneProps) {
   const { autoRotate, cameraView } = useViewStore();
   const { isIsolated } = useIsolateStore();
 
-  const handleBackgroundClick = () => {
+  const handleBackgroundClick = (e: any) => {
+    if (e._isOrganClick) return;
     if (!isIsolated) {
       useSelectionStore.getState().clearSelection();
       useSearchStore.getState().clearHighlight();
