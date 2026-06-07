@@ -1,13 +1,15 @@
 import { useRef, useEffect } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { HumanBody } from './HumanBody';
 import { Lighting } from './Lighting';
 import { PostEffects } from './PostEffects';
+import { AnnotationPinsGroup } from './AnnotationPin';
 import { useViewStore } from '../../store/useViewStore';
 import { useSelectionStore } from '../../store/useSelectionStore';
 import { useSearchStore } from '../../store/useSearchStore';
+import { useAnnotationStore } from '../../store/useAnnotationStore';
 
 interface SceneControllerProps {
   autoRotate: boolean;
@@ -15,9 +17,68 @@ interface SceneControllerProps {
   isOrthographic: boolean;
 }
 
+function AnnotationClickPlane() {
+  const { camera, raycaster, mouse } = useThree();
+  const planeRef = useRef<THREE.Mesh>(null);
+  const { isAnnotationMode, setPendingAnnotationPosition, annotations } = useAnnotationStore();
+  const previewPositionRef = useRef<[number, number, number] | null>(null);
+  const previewMeshRef = useRef<THREE.Mesh>(null);
+
+  useFrame(() => {
+    if (!isAnnotationMode || !planeRef.current || !previewMeshRef.current) return;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(planeRef.current);
+
+    if (intersects.length > 0) {
+      const point = intersects[0].point;
+      previewPositionRef.current = [point.x, point.y, point.z];
+      previewMeshRef.current.position.copy(point);
+      previewMeshRef.current.visible = true;
+    } else {
+      previewMeshRef.current.visible = false;
+    }
+  });
+
+  const handleClick = (e: any) => {
+    if (!isAnnotationMode) return;
+    e.stopPropagation();
+
+    if (previewPositionRef.current) {
+      setPendingAnnotationPosition([...previewPositionRef.current]);
+    }
+  };
+
+  if (!isAnnotationMode) return null;
+
+  return (
+    <>
+      <mesh
+        ref={planeRef}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, -0.5, 0]}
+        onClick={handleClick}
+      >
+        <planeGeometry args={[20, 20]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+
+      <mesh ref={previewMeshRef} visible={false}>
+        <sphereGeometry args={[0.06, 16, 16]} />
+        <meshBasicMaterial
+          color="#00BCD4"
+          transparent
+          opacity={0.7}
+        />
+      </mesh>
+    </>
+  );
+}
+
 function SceneController({ autoRotate, cameraView, isOrthographic }: SceneControllerProps) {
   const { camera } = useThree();
   const controlsRef = useRef<any>(null);
+  const { isAnnotationMode, annotations, setPendingAnnotationPosition } = useAnnotationStore();
 
   useEffect(() => {
     if (!camera || !controlsRef.current) return;
@@ -46,9 +107,22 @@ function SceneController({ autoRotate, cameraView, isOrthographic }: SceneContro
   }, [cameraView, camera]);
 
   const handleCanvasClick = () => {
-    useSelectionStore.getState().clearSelection();
-    useSearchStore.getState().clearHighlight();
+    if (!isAnnotationMode) {
+      useSelectionStore.getState().clearSelection();
+      useSearchStore.getState().clearHighlight();
+    }
   };
+
+  useEffect(() => {
+    if (isAnnotationMode) {
+      document.body.style.cursor = 'crosshair';
+    } else {
+      document.body.style.cursor = 'default';
+    }
+    return () => {
+      document.body.style.cursor = 'default';
+    };
+  }, [isAnnotationMode]);
 
   return (
     <>
@@ -64,6 +138,8 @@ function SceneController({ autoRotate, cameraView, isOrthographic }: SceneContro
         autoRotateSpeed={0.5}
         enablePan={false}
         onClick={handleCanvasClick}
+        enableRotate={!isAnnotationMode}
+        enableZoom={true}
       />
       
       <gridHelper args={[10, 10, '#1a2332', '#0f1722']} position={[0, -2.5, 0]} />
@@ -72,6 +148,10 @@ function SceneController({ autoRotate, cameraView, isOrthographic }: SceneContro
         <planeGeometry args={[20, 20]} />
         <meshStandardMaterial color="#0a1628" transparent opacity={0.8} />
       </mesh>
+
+      <AnnotationClickPlane />
+      
+      <AnnotationPinsGroup annotations={annotations} />
     </>
   );
 }

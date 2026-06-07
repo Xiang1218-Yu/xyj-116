@@ -6,6 +6,7 @@ import { LeftControlPanel } from '../components/layout/LeftControlPanel';
 import { RightInfoPanel } from '../components/layout/RightInfoPanel';
 import { ViewControls } from '../components/layout/ViewControls';
 import { QuizPanel } from '../components/layout/QuizPanel';
+import { AnnotationPanel } from '../components/layout/AnnotationPanel';
 import { useSelectionStore } from '../store/useSelectionStore';
 import { useQuizStore } from '../store/useQuizStore';
 import { useState, useEffect } from 'react';
@@ -34,6 +35,7 @@ export default function Home() {
       <RightInfoPanel />
       <ViewControls />
       <QuizPanel />
+      <AnnotationPanel />
       
       {showWelcome && (
         <motion.div

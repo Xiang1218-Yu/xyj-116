@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { Layers, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
-import { AnatomyLayer, ANATOMY_LAYER_ORDER, LAYER_NAMES } from '../../types';
+import { Layers, ChevronDown, ChevronUp, RotateCcw, MapPin } from 'lucide-react';
+import { AnatomyLayer, ANATOMY_LAYER_ORDER, LAYER_NAMES, ANNOTATION_COLORS } from '../../types';
 import { useAnatomyStore } from '../../store/useAnatomyStore';
+import { useAnnotationStore } from '../../store/useAnnotationStore';
 import { GlassPanel } from '../ui/GlassPanel';
 import { GlassButton } from '../ui/GlassButton';
 import { cn } from '../../lib/utils';
@@ -24,6 +25,7 @@ const layerDescriptions: Record<AnatomyLayer, string> = {
 
 export function LeftControlPanel() {
   const { currentLayer, layerProgress, setCurrentLayer, peelLayer, restoreLayer, resetToFull, isLayerVisible } = useAnatomyStore();
+  const { isAnnotationMode, setAnnotationMode, annotations } = useAnnotationStore();
 
   const currentIndex = ANATOMY_LAYER_ORDER.indexOf(currentLayer);
 
@@ -138,6 +140,79 @@ export function LeftControlPanel() {
             <RotateCcw className="w-4 h-4 mr-2" />
             重置为完整人体
           </GlassButton>
+
+          <div className="pt-4 border-t border-white/10">
+            <div className="flex items-center gap-3 pb-3">
+              <div className={cn(
+                'w-9 h-9 rounded-xl flex items-center justify-center transition-colors duration-200',
+                isAnnotationMode
+                  ? 'bg-gradient-to-br from-pink-500/30 to-purple-500/30'
+                  : 'bg-white/10'
+              )}>
+                <MapPin className={cn(
+                  'w-5 h-5 transition-colors duration-200',
+                  isAnnotationMode ? 'text-pink-400' : 'text-white/60'
+                )} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-white">标注笔记</h3>
+                <p className="text-[11px] text-white/50">
+                  {annotations.length > 0
+                    ? `已有 ${annotations.length} 个标注`
+                    : '在模型上添加学习笔记'}
+                </p>
+              </div>
+            </div>
+
+            <GlassButton
+              variant={isAnnotationMode ? 'primary' : 'secondary'}
+              size="sm"
+              className="w-full"
+              active={isAnnotationMode}
+              onClick={() => setAnnotationMode(!isAnnotationMode)}
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              {isAnnotationMode ? '退出标注模式' : '进入标注模式'}
+            </GlassButton>
+
+            {isAnnotationMode && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mt-3 p-3 rounded-xl bg-pink-500/10 border border-pink-400/20"
+              >
+                <p className="text-[11px] text-pink-200 leading-relaxed">
+                  💡 <span className="font-medium">使用提示：</span>点击模型任意位置添加标注，图钉会固定在点击处。点击已有的图钉可以查看和编辑笔记内容。
+                </p>
+              </motion.div>
+            )}
+
+            {annotations.length > 0 && (
+              <div className="mt-3 space-y-1.5 max-h-32 overflow-y-auto">
+                {annotations.slice(-5).reverse().map((ann) => (
+                  <motion.div
+                    key={ann.id}
+                    className="flex items-center gap-2 p-2 rounded-lg bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.06] cursor-pointer transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: ANNOTATION_COLORS[ann.color] }}
+                    />
+                    <span className="text-xs text-white/80 truncate flex-1">
+                      {ann.title}
+                    </span>
+                    {ann.priority === 'high' && (
+                      <span className="px-1 py-0.5 text-[9px] font-semibold text-red-400 bg-red-500/20 rounded">
+                        重要
+                      </span>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </GlassPanel>
     </motion.div>

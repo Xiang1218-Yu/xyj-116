@@ -98,3 +98,41 @@ export interface ViewState {
   cameraView: CameraView;
   isOrthographic: boolean;
 }
+
+export type AnnotationColor = 'red' | 'yellow' | 'green' | 'blue' | 'purple';
+
+export type AnnotationPriority = 'low' | 'medium' | 'high';
+
+export interface Annotation {
+  id: string;
+  position: [number, number, number];
+  title: string;
+  content: string;
+  color: AnnotationColor;
+  priority: AnnotationPriority;
+  createdAt: number;
+  updatedAt: number;
+  targetStructureId?: string;
+}
+
+export const ANNOTATION_COLORS: Record<AnnotationColor, string> = {
+  red: '#EF4444',
+  yellow: '#F59E0B',
+  green: '#10B981',
+  blue: '#3B82F6',
+  purple: '#8B5CF6'
+};
+
+export const ANNOTATION_COLOR_NAMES: Record<AnnotationColor, string> = {
+  red: '红色',
+  yellow: '黄色',
+  green: '绿色',
+  blue: '蓝色',
+  purple: '紫色'
+};
+
+export const ANNOTATION_PRIORITY_NAMES: Record<AnnotationPriority, string> = {
+  low: '一般',
+  medium: '重要',
+  high: '非常重要'
+};
