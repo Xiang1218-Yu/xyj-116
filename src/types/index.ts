@@ -108,6 +108,7 @@ export interface OrganInfo {
   id: string;
   structureId: string;
   function: string;
+  shortFunction: string;
   description: string;
   commonPathologies: Pathology[];
   clinicalCases: ClinicalCase[];

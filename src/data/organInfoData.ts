@@ -5,6 +5,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-heart',
     structureId: 'heart',
     function: '心脏是循环系统的核心器官，主要功能是泵送血液至全身。通过有节律的收缩和舒张，将富含氧气的血液输送到全身各组织，并将含二氧化碳的血液运回肺部进行气体交换。心脏每天跳动约10万次，泵血约7500升。',
+    shortFunction: '循环系统核心，通过节律性舒缩泵送血液至全身。',
     description: '心脏位于胸腔中纵隔内，约2/3位于身体中线左侧，1/3位于右侧。成人心脏重约250-350克，大小与本人拳头相当。心脏分为四个腔室：左心房、左心室、右心房、右心室。左心室壁最厚，负责向全身泵血。',
     commonPathologies: [
       {
@@ -60,6 +61,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-lung',
     structureId: 'lung-left',
     function: '肺是呼吸系统的主要器官，负责气体交换。吸入的氧气在肺泡中进入血液，同时血液中的二氧化碳排出体外。成人肺约有7亿个肺泡，总面积约70-80平方米，相当于一个网球场大小。',
+    shortFunction: '呼吸系统核心，实现氧气与二氧化碳的气体交换。',
     description: '肺位于胸腔内纵隔两侧，右肺分上、中、下三叶，左肺分上、下两叶。肺组织呈海绵状，富有弹性。肺通过气管、支气管与外界相通，完成吸入氧气、排出二氧化碳的呼吸功能。',
     commonPathologies: [
       {
@@ -106,6 +108,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-liver',
     structureId: 'liver',
     function: '肝脏是人体最大的消化腺和代谢器官，具有合成蛋白质、分泌胆汁、解毒、储存糖原等重要功能。肝脏参与500多种生化反应，是机体的"化学工厂"。成人肝脏每天合成约12-20g白蛋白，分泌约800-1000ml胆汁。',
+    shortFunction: '人体最大消化腺，承担代谢、解毒、合成蛋白质等核心功能。',
     description: '肝脏位于右上腹，重约1200-1500g，分左、右两叶。肝脏血供丰富，25%来自肝动脉，75%来自门静脉。肝脏具有强大的再生能力，切除70%-80%后仍可再生至接近原大小。',
     commonPathologies: [
       {
@@ -152,6 +155,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-stomach',
     structureId: 'stomach',
     function: '胃是消化系统的重要器官，主要功能是储存食物、分泌胃液进行初步消化，并将食糜逐步排入十二指肠。胃能容纳约1-2升食物，分泌的盐酸可杀灭细菌，胃蛋白酶原可初步分解蛋白质。',
+    shortFunction: '储存和初步消化食物，分泌胃液杀灭细菌、分解蛋白质。',
     description: '胃位于左上腹，呈"J"形，分为贲门、胃底、胃体、胃窦四部分。胃壁由黏膜层、黏膜下层、肌层和浆膜层组成。胃排空时间：流质食物约1-2小时，混合食物约4-6小时。',
     commonPathologies: [
       {
@@ -198,6 +202,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-brain',
     structureId: 'brain',
     function: '大脑是中枢神经系统的最高级部分，负责控制意识、思维、记忆、情感、运动等所有高级神经活动。大脑皮层约有140亿个神经元，通过突触连接形成复杂的神经网络。成人脑重约1300-1500g，占体重的2%-3%，但耗氧量占全身的20%。',
+    shortFunction: '中枢神经系统最高级部分，控制意识、思维、记忆、情感等所有高级神经活动。',
     description: '大脑位于颅腔内，由左右两个大脑半球组成，表面有许多沟回增加皮层面积。大脑分额叶（运动、语言、决策）、顶叶（感觉）、颞叶（听觉、记忆）、枕叶（视觉）等功能区。',
     commonPathologies: [
       {
@@ -244,6 +249,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-skeleton',
     structureId: 'skull',
     function: '骨骼系统具有支撑身体、保护内脏、运动杠杆、造血、储存矿物质等重要功能。成人共有206块骨，占体重的约20%。骨髓是造血器官，骨组织储存了体内99%的钙。',
+    shortFunction: '支撑身体、保护内脏、参与运动、造血并储存矿物质。',
     description: '骨骼分为颅骨、躯干骨和四肢骨三大部分。骨由骨膜、骨质和骨髓组成。骨组织不断进行重塑，成人每年约有10%的骨组织被更新。',
     commonPathologies: [
       {
@@ -290,6 +296,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-muscle',
     structureId: 'muscle-chest',
     function: '肌肉系统通过收缩产生力和运动，同时维持姿势、产生热量。人体约有600多块骨骼肌，占体重的40%-50%。肌肉收缩所需能量主要来自ATP，剧烈运动时可产生大量热量。',
+    shortFunction: '通过收缩产生力和运动，维持身体姿势并产生热量。',
     description: '骨骼肌由肌纤维（肌细胞）组成，每条肌纤维含有大量肌原纤维。肌肉通过肌腱附着于骨骼，跨越关节，收缩时产生关节运动。肌肉具有肥大和萎缩的可塑性。',
     commonPathologies: [
       {
@@ -336,6 +343,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-kidney',
     structureId: 'kidney-left',
     function: '肾脏是人体重要的排泄器官，主要功能是生成尿液，排出代谢废物和多余水分，同时调节水、电解质和酸碱平衡。肾脏还具有内分泌功能，分泌促红细胞生成素、肾素、活性维生素D等。两侧肾脏每分钟滤过约125ml血液，每天生成原尿约180升。',
+    shortFunction: '生成尿液排出代谢废物，调节水电解质平衡并分泌多种激素。',
     description: '肾脏位于腹膜后脊柱两侧，形如蚕豆，重约120-150g/个。肾实质分为皮质和髓质，肾单位是肾脏的基本功能单位，每个肾约有100万个肾单位。',
     commonPathologies: [
       {
@@ -382,6 +390,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-spinal-cord',
     structureId: 'spinal-cord',
     function: '脊髓是中枢神经系统的重要组成部分，是大脑与周围神经之间的信息传递通路。脊髓具有传导功能（上行传导感觉、下行传导运动）和反射功能（完成许多基本的反射活动，如膝跳反射、排尿反射等）。成人脊髓长约40-45cm，上端与延髓相连，下端终止于第1腰椎下缘水平。',
+    shortFunction: '大脑与周围神经的信息传递通路，兼具传导与反射功能。',
     description: '脊髓位于椎管内，呈前后稍扁的圆柱形，外包被膜。脊髓内部由灰质（神经元胞体）和白质（神经纤维）组成。脊髓分为31个节段：颈髓8节、胸髓12节、腰髓5节、骶髓5节、尾髓1节，每节发出一对脊神经。',
     commonPathologies: [
       {
@@ -428,6 +437,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-cerebellum',
     structureId: 'cerebellum',
     function: '小脑是重要的运动调节中枢，主要功能包括：维持身体平衡、调节肌张力、协调随意运动。小脑不直接发起运动，但通过整合感觉信息和运动指令，确保运动的准确、协调和流畅。小脑损伤典型表现为"共济失调"。',
+    shortFunction: '运动调节中枢，维持身体平衡、调节肌张力、协调随意运动。',
     description: '小脑位于颅后窝，在大脑半球枕叶下方、脑干背侧。成人小脑重约150g，占脑重的约10%，但包含了全脑约50%的神经元。小脑分为左右两个小脑半球和中间的蚓部。',
     commonPathologies: [
       {
@@ -474,6 +484,7 @@ export const organInfoData: OrganInfo[] = [
     id: 'info-brainstem',
     structureId: 'brainstem',
     function: '脑干是连接大脑、小脑和脊髓的"生命中枢"，具有极其重要的功能：1) 传导功能：上下行神经纤维的必经之路；2) 反射中枢：心血管运动中枢、呼吸中枢、呕吐中枢等基本生命中枢；3) 参与睡眠觉醒、意识维持等高级功能。脑干损伤常危及生命。',
+    shortFunction: '连接大脑、小脑和脊髓的生命中枢，调控呼吸、心跳等基本生命活动。',
     description: '脑干位于颅后窝，自下而上分为延髓、脑桥、中脑三部分，长约7-8cm。脑干内部结构复杂，包含10对颅神经核团、网状结构和大量上下行传导束。',
     commonPathologies: [
       {
@@ -520,4 +531,48 @@ export const organInfoData: OrganInfo[] = [
 
 export const getOrganInfoByStructureId = (structureId: string): OrganInfo | undefined => {
   return organInfoData.find(info => info.structureId === structureId);
+};
+
+const shortFunctionMap: Record<string, string> = {
+  'skin-whole': '人体最大器官，保护深层组织、调节体温、感知外界刺激。',
+  'skin-head': '覆盖头部的皮肤，保护颅骨并生长毛发。',
+  'fat-abdominal': '腹部皮下脂肪，储存能量、保温并缓冲外力。',
+  'fat-subcutaneous': '全身皮下脂肪组织，储存能量、维持体温、保护内脏。',
+  'muscle-chest': '胸前壁主要肌肉，参与上臂内收和内旋运动。',
+  'muscle-abdominis': '腹前壁核心肌肉，维持腹压、参与躯干前屈和呼吸。',
+  'muscle-bicep-left': '左上臂屈肌，主要作用是屈肘和使前臂旋后。',
+  'muscle-bicep-right': '右上臂屈肌，主要作用是屈肘和使前臂旋后。',
+  'muscle-quad-left': '左大腿前群肌，伸膝、屈髋，是人体最强壮的肌肉之一。',
+  'muscle-quad-right': '右大腿前群肌，伸膝、屈髋，是人体最强壮的肌肉之一。',
+  'heart': '循环系统核心，通过节律性舒缩泵送血液至全身。',
+  'lung-left': '左肺，两叶结构，参与氧气与二氧化碳的气体交换。',
+  'lung-right': '右肺，三叶结构，参与氧气与二氧化碳的气体交换。',
+  'liver': '人体最大消化腺，承担代谢、解毒、合成蛋白质等核心功能。',
+  'stomach': '储存和初步消化食物，分泌胃液杀灭细菌、分解蛋白质。',
+  'spleen': '重要免疫器官，储存血液、过滤衰老红细胞、参与免疫应答。',
+  'kidney-left': '左肾，生成尿液排出代谢废物，调节水电解质平衡。',
+  'kidney-right': '右肾，生成尿液排出代谢废物，调节水电解质平衡。',
+  'intestines': '消化吸收的主要场所，包括小肠和大肠。',
+  'bladder': '储存尿液的肌性囊状器官，排空时将尿液排出体外。',
+  'brain': '中枢神经系统最高级部分，控制意识、思维、记忆、情感等所有高级神经活动。',
+  'spinal-cord': '大脑与周围神经的信息传递通路，兼具传导与反射功能。',
+  'cerebellum': '运动调节中枢，维持身体平衡、调节肌张力、协调随意运动。',
+  'brainstem': '连接大脑、小脑和脊髓的生命中枢，调控呼吸、心跳等基本生命活动。',
+  'skull': '容纳和保护大脑与感觉器官的骨性结构。',
+  'spine': '脊柱，支撑躯干、保护脊髓、参与躯干运动的中轴骨骼。',
+  'sternum': '胸骨，参与构成胸廓前壁，保护心脏等重要器官。',
+  'ribcage': '胸廓，保护心肺并参与呼吸运动。',
+  'clavicle-left': '左侧锁骨，连接上肢与躯干，支撑肩关节活动。',
+  'clavicle-right': '右侧锁骨，连接上肢与躯干，支撑肩关节活动。',
+  'humerus-left': '左侧肱骨，上臂的骨性支架，参与肩关节与肘关节运动。',
+  'humerus-right': '右侧肱骨，上臂的骨性支架，参与肩关节与肘关节运动。',
+  'pelvis': '骨盆，支撑躯干、保护盆腔脏器、传递下肢力量。',
+  'femur-left': '左侧股骨，人体最长最粗壮的骨，支撑体重并参与髋膝关节运动。',
+  'femur-right': '右侧股骨，人体最长最粗壮的骨，支撑体重并参与髋膝关节运动。',
+  'tibia-left': '左侧胫骨，小腿主要承重骨，参与膝关节与踝关节运动。',
+  'tibia-right': '右侧胫骨，小腿主要承重骨，参与膝关节与踝关节运动。'
+};
+
+export const getShortFunctionByStructureId = (structureId: string): string => {
+  return shortFunctionMap[structureId] || '解剖结构';
 };

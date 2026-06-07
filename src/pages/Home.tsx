@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { MousePointer2, Layers, Info, MapPin, BookOpen } from 'lucide-react';
 import { AnatomyScene } from '../components/three/AnatomyScene';
+import { OrganTooltip } from '../components/three/OrganTooltip';
 import { TopNavbar } from '../components/layout/TopNavbar';
 import { LeftControlPanel } from '../components/layout/LeftControlPanel';
 import { RightInfoPanel } from '../components/layout/RightInfoPanel';
@@ -116,11 +117,13 @@ export default function Home() {
             transition={{ duration: 0.3 }}
           >
             <div className="glass px-4 py-2 rounded-xl text-xs text-white/50 text-center max-w-lg">
-              💡 提示：点击任意器官查看详情 · 点击左侧「解剖引导」开启标准化流程学习 · 点击顶部「标注」按钮在模型上添加学习笔记
+              💡 提示：悬停器官查看简介 · 点击任意器官查看详情 · 点击左侧「解剖引导」开启标准化流程学习 · 点击顶部「标注」按钮在模型上添加学习笔记
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <OrganTooltip />
     </div>
   );
 }
