@@ -1,13 +1,15 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, User, HelpCircle, Menu, X, Search, ChevronRight, MapPin } from 'lucide-react';
+import { Activity, User, HelpCircle, Menu, X, Search, ChevronRight, MapPin, Tag, BookOpen, AlertTriangle, Scan, Eye, EyeOff } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { BodySystem, SYSTEM_NAMES, AnatomyStructure } from '../../types';
 import { useAnatomyStore } from '../../store/useAnatomyStore';
 import { useAnnotationStore } from '../../store/useAnnotationStore';
+import { useLabelStore } from '../../store/useLabelStore';
 import { GlassButton } from '../ui/GlassButton';
 import { cn } from '../../lib/utils';
 import { useSearchStore } from '../../store/useSearchStore';
 import { getStructureById } from '../../data/anatomyData';
+import { useSelectionStore } from '../../store/useSelectionStore';
 
 const systemOptions: { id: BodySystem | null; label: string; icon: string }[] = [
   { id: null, label: '全部系统', icon: '🧬' },
@@ -20,19 +22,35 @@ const systemOptions: { id: BodySystem | null; label: string; icon: string }[] = 
   { id: BodySystem.ENDOCRINE, label: SYSTEM_NAMES[BodySystem.ENDOCRINE], icon: '🩸' },
 ];
 
+const labelModeConfig = {
+  off: { label: '关闭标签', icon: <EyeOff className="w-4 h-4" /> },
+  selected: { label: '仅选中显示', icon: <Tag className="w-4 h-4" /> },
+  all: { label: '全部显示', icon: <Eye className="w-4 h-4" /> },
+};
+
+const resultTypeIcons = {
+  structure: <Scan className="w-4 h-4 text-cyan-400" />,
+  pathology: <AlertTriangle className="w-4 h-4 text-amber-400" />,
+  case: <BookOpen className="w-4 h-4 text-emerald-400" />,
+};
+
+const resultTypeLabels = {
+  structure: '器官',
+  pathology: '病变',
+  case: '病例',
+};
+
 export function TopNavbar() {
   const { activeSystem, setActiveSystem } = useAnatomyStore();
   const { searchQuery, searchResults, setSearchQuery, clearSearch, selectResult } = useSearchStore();
   const { isAnnotationMode, setAnnotationMode, annotations } = useAnnotationStore();
+  const { showLabels, toggleLabels, setShowLabels, showLatinName, setShowLatinName } = useLabelStore();
+  const { setSelectedStructureId } = useSelectionStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const resultStructures = searchResults
-    .map(id => getStructureById(id))
-    .filter(Boolean) as AnatomyStructure[];
 
   useEffect(() => {
     setSelectedIndex(0);
@@ -52,16 +70,20 @@ export function TopNavbar() {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setSelectedIndex(prev => 
-        prev < resultStructures.length - 1 ? prev + 1 : 0
+        prev < searchResults.length - 1 ? prev + 1 : 0
       );
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIndex(prev => 
-        prev > 0 ? prev - 1 : resultStructures.length - 1
+        prev > 0 ? prev - 1 : searchResults.length - 1
       );
-    } else if (e.key === 'Enter' && resultStructures.length > 0) {
+    } else if (e.key === 'Enter' && searchResults.length > 0) {
       e.preventDefault();
-      selectResult(resultStructures[selectedIndex].id);
+      const result = searchResults[selectedIndex];
+      selectResult(result);
+      if (result.structureId) {
+        setSelectedStructureId(result.structureId);
+      }
       setSearchOpen(false);
       inputRef.current?.blur();
     } else if (e.key === 'Escape') {
@@ -71,8 +93,11 @@ export function TopNavbar() {
     }
   };
 
-  const handleResultClick = (id: string) => {
-    selectResult(id);
+  const handleResultClick = (result: typeof searchResults[0]) => {
+    selectResult(result);
+    if (result.structureId) {
+      setSelectedStructureId(result.structureId);
+    }
     setSearchOpen(false);
   };
 
@@ -116,7 +141,7 @@ export function TopNavbar() {
             ))}
           </div>
 
-          <div ref={searchContainerRef} className="hidden md:block relative w-56 lg:w-64">
+          <div ref={searchContainerRef} className="hidden md:block relative w-56 lg:w-72">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
               <input
@@ -129,7 +154,7 @@ export function TopNavbar() {
                 }}
                 onFocus={() => setSearchOpen(true)}
                 onKeyDown={handleKeyDown}
-                placeholder="搜索器官..."
+                placeholder="搜索器官、病变、病例..."
                 className="w-full pl-10 pr-10 py-2 bg-white/[0.05] backdrop-blur-xl rounded-xl border border-white/[0.08] text-white placeholder-white/40 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition-all"
               />
               {searchQuery && (
@@ -146,18 +171,18 @@ export function TopNavbar() {
             </div>
 
             <AnimatePresence>
-              {searchOpen && resultStructures.length > 0 && (
+              {searchOpen && searchResults.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute top-full left-0 right-0 mt-2 max-h-80 overflow-y-auto bg-slate-900/95 backdrop-blur-2xl rounded-xl border border-white/[0.08] shadow-2xl shadow-black/50"
+                  className="absolute top-full left-0 right-0 mt-2 max-h-96 overflow-y-auto bg-slate-900/95 backdrop-blur-2xl rounded-xl border border-white/[0.08] shadow-2xl shadow-black/50"
                 >
-                  {resultStructures.map((structure, index) => (
+                  {searchResults.map((result, index) => (
                     <button
-                      key={structure.id}
-                      onClick={() => handleResultClick(structure.id)}
+                      key={`${result.type}-${result.id}`}
+                      onClick={() => handleResultClick(result)}
                       onMouseEnter={() => setSelectedIndex(index)}
                       className={cn(
                         "w-full px-4 py-3 flex items-center gap-3 text-left transition-all",
@@ -167,12 +192,35 @@ export function TopNavbar() {
                       )}
                     >
                       <div 
-                        className="w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: structure.geometry.color }}
-                      />
+                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ 
+                          backgroundColor: result.type === 'structure' 
+                            ? 'rgba(0, 188, 212, 0.15)' 
+                            : result.type === 'pathology'
+                            ? 'rgba(245, 158, 11, 0.15)'
+                            : 'rgba(16, 185, 129, 0.15)'
+                        }}
+                      >
+                        {resultTypeIcons[result.type]}
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{structure.name}</div>
-                        <div className="text-[10px] text-white/40 truncate">{structure.latinName}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm font-medium truncate">{result.name}</div>
+                          <span className={cn(
+                            "px-1.5 py-0.5 text-[9px] font-medium rounded-full flex-shrink-0",
+                            result.type === 'structure' && 'bg-cyan-500/20 text-cyan-400',
+                            result.type === 'pathology' && 'bg-amber-500/20 text-amber-400',
+                            result.type === 'case' && 'bg-emerald-500/20 text-emerald-400'
+                          )}>
+                            {resultTypeLabels[result.type]}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-white/40 truncate">
+                            {result.structureName && `${result.structureName} · `}
+                            {result.description.length > 30 ? result.description.slice(0, 30) + '...' : result.description}
+                          </span>
+                        </div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-white/30" />
                     </button>
@@ -182,14 +230,14 @@ export function TopNavbar() {
             </AnimatePresence>
 
             <AnimatePresence>
-              {searchOpen && searchQuery && resultStructures.length === 0 && (
+              {searchOpen && searchQuery && searchResults.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   className="absolute top-full left-0 right-0 mt-2 px-4 py-3 bg-slate-900/95 backdrop-blur-2xl rounded-xl border border-white/[0.08] shadow-2xl shadow-black/50 text-center"
                 >
-                  <div className="text-white/50 text-sm">未找到匹配的器官</div>
+                  <div className="text-white/50 text-sm">未找到匹配结果</div>
                   <div className="text-white/30 text-xs mt-1">支持中文、拉丁文、拼音首字母</div>
                 </motion.div>
               )}
@@ -198,6 +246,29 @@ export function TopNavbar() {
 
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-2">
+              <GlassButton
+                variant={showLabels !== 'off' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={toggleLabels}
+                active={showLabels !== 'off'}
+                className="relative flex items-center gap-1.5"
+                title={labelModeConfig[showLabels].label}
+              >
+                {labelModeConfig[showLabels].icon}
+                <span className="text-xs">标签</span>
+              </GlassButton>
+
+              <GlassButton
+                variant={showLatinName ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setShowLatinName(!showLatinName)}
+                active={showLatinName}
+                className="flex items-center gap-1.5"
+                title={showLatinName ? '隐藏拉丁文名称' : '显示拉丁文名称'}
+              >
+                <span className="text-xs italic">Lat</span>
+              </GlassButton>
+
               <GlassButton
                 variant={isAnnotationMode ? 'primary' : 'ghost'}
                 size="sm"
@@ -259,7 +330,7 @@ export function TopNavbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="搜索器官..."
+                  placeholder="搜索器官、病变、病例..."
                   className="w-full pl-10 pr-10 py-2 bg-white/[0.05] rounded-xl border border-white/[0.08] text-white placeholder-white/40 text-sm focus:outline-none focus:border-cyan-400/50"
                 />
                 {searchQuery && (
@@ -271,29 +342,54 @@ export function TopNavbar() {
                   </button>
                 )}
               </div>
-              {resultStructures.length > 0 && (
+              {searchResults.length > 0 && (
                 <div className="mt-2 max-h-48 overflow-y-auto">
-                  {resultStructures.map((structure) => (
+                  {searchResults.map((result, index) => (
                     <button
-                      key={structure.id}
+                      key={`${result.type}-${result.id}`}
                       onClick={() => {
-                        handleResultClick(structure.id);
+                        handleResultClick(result);
                         setMobileMenuOpen(false);
                       }}
                       className="w-full px-3 py-2 flex items-center gap-2 text-left text-white/70 hover:bg-white/5 hover:text-white rounded-lg transition-all"
                     >
-                      <div 
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: structure.geometry.color }}
-                      />
+                      <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0">
+                        {resultTypeIcons[result.type]}
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm truncate">{structure.name}</div>
+                        <div className="text-sm truncate">{result.name}</div>
+                        <div className="text-[10px] text-white/40">
+                          {resultTypeLabels[result.type]} · {result.structureName}
+                        </div>
                       </div>
                     </button>
                   ))}
                 </div>
               )}
             </div>
+
+            <div className="flex items-center gap-2 mb-3">
+              <GlassButton
+                variant={showLabels !== 'off' ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={toggleLabels}
+                active={showLabels !== 'off'}
+                className="flex-1 flex items-center justify-center gap-1.5"
+              >
+                {labelModeConfig[showLabels].icon}
+                <span className="text-xs">{labelModeConfig[showLabels].label}</span>
+              </GlassButton>
+              <GlassButton
+                variant={showLatinName ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setShowLatinName(!showLatinName)}
+                active={showLatinName}
+                className="flex items-center justify-center"
+              >
+                <span className="text-xs italic">Lat</span>
+              </GlassButton>
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               {systemOptions.map((system) => (
                 <GlassButton

@@ -48,7 +48,7 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
   const showWrongHighlight = isQuizMode && lastAnswerResult === 'wrong' && isLastClicked;
   const showTargetReveal = isQuizMode && lastAnswerResult === 'wrong' && isTargetStructure;
   const isSearchHighlighted = highlightedStructureId === structure.id;
-  const isInSearchResults = searchResults.includes(structure.id);
+  const isInSearchResults = searchResults.some(r => r.structureId === structure.id);
   const isCurrentIsolated = isolatedStructureId === structure.id;
   const isOtherOrganInIsolateMode = isIsolated && !isCurrentIsolated;
 

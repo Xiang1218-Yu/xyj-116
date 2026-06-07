@@ -13,7 +13,8 @@ export const organInfoData: OrganInfo[] = [
         description: '冠状动脉粥样硬化导致心肌供血不足的疾病',
         symptoms: ['胸痛（心绞痛）', '胸闷', '放射痛至左肩或下颌', '活动后加重'],
         treatment: '药物治疗（硝酸酯类、他汀类）、介入治疗（PCI）、冠状动脉旁路移植术（CABG）',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-2',
@@ -21,7 +22,8 @@ export const organInfoData: OrganInfo[] = [
         description: '心脏泵血功能减退，无法满足机体代谢需求',
         symptoms: ['呼吸困难', '下肢水肿', '乏力', '夜间阵发性呼吸困难'],
         treatment: 'ACEI/ARB类药物、β受体阻滞剂、醛固酮受体拮抗剂、心脏再同步化治疗',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-3',
@@ -29,7 +31,8 @@ export const organInfoData: OrganInfo[] = [
         description: '心脏电活动异常导致节律不规则',
         symptoms: ['心悸', '头晕', '昏厥', '胸闷'],
         treatment: '抗心律失常药物、导管消融、植入心脏起搏器或除颤器',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'vascular'
       }
     ],
     clinicalCases: [
@@ -65,7 +68,8 @@ export const organInfoData: OrganInfo[] = [
         description: '病原微生物感染引起的肺实质炎症',
         symptoms: ['发热', '咳嗽', '咳痰', '胸痛', '呼吸困难'],
         treatment: '抗生素治疗（细菌性）、抗病毒治疗（病毒性）、对症支持治疗',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'infectious'
       },
       {
         id: 'path-5',
@@ -73,7 +77,8 @@ export const organInfoData: OrganInfo[] = [
         description: '长期吸烟等因素导致的不可逆性气道阻塞',
         symptoms: ['慢性咳嗽', '咳痰', '活动后气促', '桶状胸'],
         treatment: '戒烟、支气管扩张剂、吸入性糖皮质激素、氧疗、肺康复',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'inflammatory'
       },
       {
         id: 'path-6',
@@ -81,7 +86,8 @@ export const organInfoData: OrganInfo[] = [
         description: '肺部恶性肿瘤，与吸烟密切相关',
         symptoms: ['刺激性干咳', '咯血', '体重下降', '胸痛', '声音嘶哑'],
         treatment: '手术切除、化疗、放疗、靶向治疗、免疫治疗',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'neoplastic'
       }
     ],
     clinicalCases: [
@@ -108,7 +114,8 @@ export const organInfoData: OrganInfo[] = [
         description: '肝炎病毒感染引起的肝脏炎症',
         symptoms: ['乏力', '食欲减退', '恶心', '黄疸', '肝区不适'],
         treatment: '抗病毒治疗（慢性乙肝/丙肝）、保肝治疗、休息营养支持',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'infectious'
       },
       {
         id: 'path-8',
@@ -116,7 +123,8 @@ export const organInfoData: OrganInfo[] = [
         description: '慢性肝病进展至终末期的病理改变',
         symptoms: ['腹水', '食管胃底静脉曲张', '脾功能亢进', '肝性脑病'],
         treatment: '病因治疗、并发症防治、肝移植（终末期）',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'inflammatory'
       },
       {
         id: 'path-9',
@@ -124,7 +132,8 @@ export const organInfoData: OrganInfo[] = [
         description: '肝细胞内脂肪过度堆积',
         symptoms: ['多无症状', '体检发现肝酶升高', '肝区隐痛'],
         treatment: '生活方式干预（减重、运动、戒酒）、控制血糖血脂',
-        severity: 'mild'
+        severity: 'mild',
+        diseaseType: 'metabolic'
       }
     ],
     clinicalCases: [
@@ -151,7 +160,8 @@ export const organInfoData: OrganInfo[] = [
         description: '胃黏膜防御因素减弱导致的黏膜缺损',
         symptoms: ['周期性上腹痛', '餐后痛（胃溃疡）', '饥饿痛（十二指肠溃疡）', '反酸嗳气'],
         treatment: '质子泵抑制剂（PPI）、根除幽门螺杆菌、胃黏膜保护剂',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'inflammatory'
       },
       {
         id: 'path-11',
@@ -159,7 +169,8 @@ export const organInfoData: OrganInfo[] = [
         description: '胃黏膜慢性炎症，与幽门螺杆菌感染相关',
         symptoms: ['上腹胀满', '隐痛', '嗳气', '食欲减退'],
         treatment: '根除幽门螺杆菌、对症治疗、饮食调整',
-        severity: 'mild'
+        severity: 'mild',
+        diseaseType: 'inflammatory'
       },
       {
         id: 'path-12',
@@ -167,7 +178,8 @@ export const organInfoData: OrganInfo[] = [
         description: '胃黏膜上皮来源的恶性肿瘤',
         symptoms: ['上腹痛进行性加重', '体重下降', '呕血黑便', '贫血'],
         treatment: '根治性手术切除、化疗、放疗、靶向治疗',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'neoplastic'
       }
     ],
     clinicalCases: [
@@ -194,7 +206,8 @@ export const organInfoData: OrganInfo[] = [
         description: '脑血管阻塞导致脑组织缺血坏死',
         symptoms: ['突发偏瘫', '失语', '意识障碍', '偏身感觉障碍'],
         treatment: '静脉溶栓（发病4.5小时内）、血管内治疗、抗血小板、康复治疗',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-14',
@@ -202,7 +215,8 @@ export const organInfoData: OrganInfo[] = [
         description: '脑血管破裂出血导致脑组织受压损伤',
         symptoms: ['突发剧烈头痛', '呕吐', '意识障碍', '脑膜刺激征'],
         treatment: '控制血压、降颅压、手术清除血肿（大量出血）、康复治疗',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-15',
@@ -210,7 +224,8 @@ export const organInfoData: OrganInfo[] = [
         description: '中枢神经系统退行性病变，老年痴呆最常见类型',
         symptoms: ['进行性记忆力下降', '认知功能减退', '行为异常', '生活不能自理'],
         treatment: '胆碱酯酶抑制剂（多奈哌齐等）、NMDA受体拮抗剂（美金刚）、认知训练、生活照护',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'degenerative'
       }
     ],
     clinicalCases: [
@@ -237,7 +252,8 @@ export const organInfoData: OrganInfo[] = [
         description: '骨的连续性中断，多由外伤引起',
         symptoms: ['局部疼痛', '肿胀', '畸形', '功能障碍', '骨擦感'],
         treatment: '复位、固定（外固定/内固定）、功能锻炼、康复治疗',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'traumatic'
       },
       {
         id: 'path-17',
@@ -245,7 +261,8 @@ export const organInfoData: OrganInfo[] = [
         description: '骨量减少、骨微结构破坏导致骨脆性增加',
         symptoms: ['多无症状', '身高变矮', '驼背', '脆性骨折'],
         treatment: '补充钙和维生素D、双膦酸盐、运动、预防跌倒',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'metabolic'
       },
       {
         id: 'path-18',
@@ -253,7 +270,8 @@ export const organInfoData: OrganInfo[] = [
         description: '关节软骨退行性变导致的慢性关节疾病',
         symptoms: ['关节疼痛', '活动后加重', '晨僵（<30分钟）', '关节畸形'],
         treatment: '对症止痛、关节腔注射、关节置换术（终末期）',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'degenerative'
       }
     ],
     clinicalCases: [
@@ -280,7 +298,8 @@ export const organInfoData: OrganInfo[] = [
         description: '肌肉过度牵拉导致的肌纤维撕裂',
         symptoms: ['局部疼痛', '压痛', '肿胀', '活动受限'],
         treatment: '休息（RICE原则）、冷敷、加压包扎、抬高患肢、康复锻炼',
-        severity: 'mild'
+        severity: 'mild',
+        diseaseType: 'traumatic'
       },
       {
         id: 'path-20',
@@ -288,7 +307,8 @@ export const organInfoData: OrganInfo[] = [
         description: '遗传性肌肉变性疾病，进行性肌无力和萎缩',
         symptoms: ['进行性肌无力', '走路延迟', 'Gowers征', '小腿假性肥大'],
         treatment: '康复治疗、对症支持、基因治疗（研究中）',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'congenital'
       },
       {
         id: 'path-21',
@@ -296,7 +316,8 @@ export const organInfoData: OrganInfo[] = [
         description: '自身免疫性神经肌肉接头传递障碍',
         symptoms: ['骨骼肌波动性无力', '晨轻暮重', '眼睑下垂', '复视'],
         treatment: '胆碱酯酶抑制剂、糖皮质激素、免疫抑制剂、胸腺切除',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'autoimmune'
       }
     ],
     clinicalCases: [
@@ -323,7 +344,8 @@ export const organInfoData: OrganInfo[] = [
         description: '各种原因导致的肾功能快速下降',
         symptoms: ['尿量减少', '水肿', '恶心呕吐', '意识障碍'],
         treatment: '病因治疗、维持水盐平衡、肾脏替代治疗（严重病例）',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-23',
@@ -331,7 +353,8 @@ export const organInfoData: OrganInfo[] = [
         description: '慢性进行性肾损伤，最终发展为尿毒症',
         symptoms: ['早期无症状', '后期乏力、食欲差', '高血压', '下肢水肿'],
         treatment: '低蛋白饮食、控制血压血糖、肾脏替代治疗（透析/移植）',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-24',
@@ -339,7 +362,8 @@ export const organInfoData: OrganInfo[] = [
         description: '尿液中结晶物质沉积形成结石',
         symptoms: ['肾绞痛', '血尿', '恶心呕吐', '尿频尿急'],
         treatment: '大量饮水、解痉止痛、体外冲击波碎石、手术取石',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'metabolic'
       }
     ],
     clinicalCases: [
@@ -366,7 +390,8 @@ export const organInfoData: OrganInfo[] = [
         description: '外伤等原因导致的脊髓结构和功能损害',
         symptoms: ['损伤平面以下运动障碍', '感觉障碍', '大小便功能障碍', '自主神经功能紊乱'],
         treatment: '急性期激素冲击、手术减压、康复治疗、并发症防治',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'traumatic'
       },
       {
         id: 'path-26',
@@ -374,7 +399,8 @@ export const organInfoData: OrganInfo[] = [
         description: '脊髓的炎性脱髓鞘或坏死性病变',
         symptoms: ['急性起病的双下肢瘫痪', '传导束型感觉障碍', '尿便障碍', '发病前常有感染史'],
         treatment: '大剂量激素冲击、免疫球蛋白、康复治疗、对症支持',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'inflammatory'
       },
       {
         id: 'path-27',
@@ -382,7 +408,8 @@ export const organInfoData: OrganInfo[] = [
         description: '颈椎退变导致脊髓受压缺血',
         symptoms: ['四肢麻木无力', '行走不稳（踩棉花感）', '大小便功能障碍', '腱反射亢进'],
         treatment: '保守治疗（轻型）、手术减压（中重度）',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'degenerative'
       }
     ],
     clinicalCases: [
@@ -409,7 +436,8 @@ export const organInfoData: OrganInfo[] = [
         description: '小脑供血动脉阻塞导致脑组织缺血坏死',
         symptoms: ['眩晕', '恶心呕吐', '行走不稳', '构音障碍', '眼球震颤'],
         treatment: '溶栓（时间窗内）、抗血小板、改善循环、康复治疗',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-29',
@@ -417,7 +445,8 @@ export const organInfoData: OrganInfo[] = [
         description: '遗传性神经系统变性疾病，小脑萎缩',
         symptoms: ['进行性行走不稳', '双手动作笨拙', '言语含糊', '眼球活动障碍'],
         treatment: '对症支持治疗、康复训练、基因咨询',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'degenerative'
       },
       {
         id: 'path-30',
@@ -425,7 +454,8 @@ export const organInfoData: OrganInfo[] = [
         description: '小脑的原发性或转移性肿瘤',
         symptoms: ['头痛呕吐（颅内压增高）', '共济失调', '眼球震颤', '强迫头位'],
         treatment: '手术切除、放疗、化疗、对症降颅压',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'neoplastic'
       }
     ],
     clinicalCases: [
@@ -452,7 +482,8 @@ export const organInfoData: OrganInfo[] = [
         description: '脑干供血动脉闭塞导致的缺血性卒中',
         symptoms: ['交叉性瘫痪（同侧颅神经麻痹+对侧肢体偏瘫）', '吞咽困难', '构音障碍', '意识障碍'],
         treatment: '溶栓（时间窗内）、抗血小板、改善循环、支持治疗',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-32',
@@ -460,7 +491,8 @@ export const organInfoData: OrganInfo[] = [
         description: '脑干血管破裂出血，病死率极高',
         symptoms: ['突发昏迷', '呕吐', '针尖样瞳孔', '呼吸节律异常', '中枢性高热'],
         treatment: '控制血压、降颅压、呼吸机支持、对症治疗、手术（慎重）',
-        severity: 'severe'
+        severity: 'severe',
+        diseaseType: 'vascular'
       },
       {
         id: 'path-33',
@@ -468,7 +500,8 @@ export const organInfoData: OrganInfo[] = [
         description: '自身免疫性神经肌肉接头传递障碍',
         symptoms: ['骨骼肌波动性无力', '晨轻暮重', '眼睑下垂', '复视'],
         treatment: '胆碱酯酶抑制剂、糖皮质激素、免疫抑制剂、胸腺切除',
-        severity: 'moderate'
+        severity: 'moderate',
+        diseaseType: 'autoimmune'
       }
     ],
     clinicalCases: [

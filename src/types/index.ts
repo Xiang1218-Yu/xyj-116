@@ -36,6 +36,53 @@ export interface AnatomyStructure {
   geometry: GeometryConfig;
 }
 
+export type DiseaseType =
+  | 'vascular'
+  | 'neoplastic'
+  | 'inflammatory'
+  | 'degenerative'
+  | 'metabolic'
+  | 'infectious'
+  | 'traumatic'
+  | 'autoimmune'
+  | 'congenital';
+
+export const DISEASE_TYPE_NAMES: Record<DiseaseType, string> = {
+  vascular: '血管性疾病',
+  neoplastic: '肿瘤性疾病',
+  inflammatory: '炎症性疾病',
+  degenerative: '退行性疾病',
+  metabolic: '代谢性疾病',
+  infectious: '感染性疾病',
+  traumatic: '外伤性疾病',
+  autoimmune: '自身免疫性疾病',
+  congenital: '先天性疾病'
+};
+
+export const DISEASE_TYPE_COLORS: Record<DiseaseType, string> = {
+  vascular: '#EF4444',
+  neoplastic: '#8B5CF6',
+  inflammatory: '#F59E0B',
+  degenerative: '#6B7280',
+  metabolic: '#10B981',
+  infectious: '#06B6D4',
+  traumatic: '#F97316',
+  autoimmune: '#EC4899',
+  congenital: '#3B82F6'
+};
+
+export const SEVERITY_NAMES: Record<string, string> = {
+  mild: '轻度',
+  moderate: '中度',
+  severe: '重度'
+};
+
+export const SEVERITY_COLORS: Record<string, string> = {
+  mild: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  moderate: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  severe: 'bg-rose-500/20 text-rose-400 border-rose-500/30'
+};
+
 export interface Pathology {
   id: string;
   name: string;
@@ -43,6 +90,7 @@ export interface Pathology {
   symptoms: string[];
   treatment: string;
   severity: 'mild' | 'moderate' | 'severe';
+  diseaseType: DiseaseType;
 }
 
 export interface ClinicalCase {

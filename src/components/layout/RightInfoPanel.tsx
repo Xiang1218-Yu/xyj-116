@@ -1,32 +1,24 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Info, AlertTriangle, BookOpen, ChevronRight, User, FileText, Maximize2, Minimize2, Eye, EyeOff, Sun } from 'lucide-react';
+import { X, Info, AlertTriangle, BookOpen, ChevronRight, User, FileText, Maximize2, Minimize2, Eye, EyeOff, Sun, Search, Filter, XCircle } from 'lucide-react';
 import { useSelectionStore } from '../../store/useSelectionStore';
 import { getStructureById } from '../../data/anatomyData';
 import { getOrganInfoByStructureId } from '../../data/organInfoData';
-import { SYSTEM_NAMES, LAYER_NAMES } from '../../types';
+import { SYSTEM_NAMES, LAYER_NAMES, SEVERITY_COLORS, SEVERITY_NAMES, DISEASE_TYPE_NAMES, DISEASE_TYPE_COLORS, DiseaseType, Pathology } from '../../types';
 import { GlassPanel } from '../ui/GlassPanel';
 import { GlassButton } from '../ui/GlassButton';
 import { TabSwitcher } from '../ui/TabSwitcher';
 import { cn } from '../../lib/utils';
 import { useIsolateStore, OtherOrgansMode } from '../../store/useIsolateStore';
 
-const severityColors = {
-  mild: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  moderate: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  severe: 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-};
-
-const severityLabels = {
-  mild: '轻度',
-  moderate: '中度',
-  severe: '重度'
-};
-
 export function RightInfoPanel() {
   const { selectedStructureId, clearSelection } = useSelectionStore();
   const { isIsolated, isolatedStructureId, isolate, reset: resetIsolation, otherOrgansMode, toggleOtherOrgansMode } = useIsolateStore();
   const [activeTab, setActiveTab] = useState('function');
+  const [severityFilter, setSeverityFilter] = useState<string | null>(null);
+  const [diseaseTypeFilter, setDiseaseTypeFilter] = useState<DiseaseType | null>(null);
+  const [caseSearchQuery, setCaseSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const structure = selectedStructureId ? getStructureById(selectedStructureId) : null;
   const organInfo = selectedStructureId ? getOrganInfoByStructureId(selectedStructureId) : null;
@@ -65,6 +57,37 @@ export function RightInfoPanel() {
     { id: 'pathology', label: '常见病变', icon: <AlertTriangle className="w-4 h-4" /> },
     { id: 'cases', label: '临床案例', icon: <BookOpen className="w-4 h-4" /> },
   ];
+
+  const filteredPathologies = useMemo(() => {
+    if (!organInfo) return [];
+    return organInfo.commonPathologies.filter((pathology: Pathology) => {
+      if (severityFilter && pathology.severity !== severityFilter) return false;
+      if (diseaseTypeFilter && pathology.diseaseType !== diseaseTypeFilter) return false;
+      return true;
+    });
+  }, [organInfo, severityFilter, diseaseTypeFilter]);
+
+  const filteredCases = useMemo(() => {
+    if (!organInfo) return [];
+    if (!caseSearchQuery.trim()) return organInfo.clinicalCases;
+    const query = caseSearchQuery.toLowerCase();
+    return organInfo.clinicalCases.filter(c => 
+      c.title.toLowerCase().includes(query) ||
+      c.patientInfo.toLowerCase().includes(query) ||
+      c.presentation.toLowerCase().includes(query) ||
+      c.diagnosis.toLowerCase().includes(query) ||
+      c.treatment.toLowerCase().includes(query) ||
+      c.outcome.toLowerCase().includes(query)
+    );
+  }, [organInfo, caseSearchQuery]);
+
+  const clearFilters = () => {
+    setSeverityFilter(null);
+    setDiseaseTypeFilter(null);
+    setShowFilters(false);
+  };
+
+  const hasActiveFilters = severityFilter !== null || diseaseTypeFilter !== null;
 
   if (!selectedStructureId) return null;
 
@@ -186,7 +209,120 @@ export function RightInfoPanel() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-3"
               >
-                {organInfo.commonPathologies.map((pathology) => (
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-white/50" />
+                    <span className="text-xs text-white/50">
+                      共 {organInfo.commonPathologies.length} 种病变
+                      {hasActiveFilters && ` · 筛选 ${filteredPathologies.length} 种`}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {hasActiveFilters && (
+                      <GlassButton
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearFilters}
+                        className="p-1.5"
+                        title="清除筛选"
+                      >
+                        <XCircle className="w-3.5 h-3.5 text-rose-400" />
+                      </GlassButton>
+                    )}
+                    <GlassButton
+                      variant={showFilters ? 'primary' : 'ghost'}
+                      size="sm"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="p-1.5"
+                      active={showFilters}
+                      title="筛选条件"
+                    >
+                      <Filter className="w-3.5 h-3.5" />
+                    </GlassButton>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {showFilters && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-3 bg-white/[0.03] rounded-xl border border-white/[0.05] space-y-3">
+                        <div>
+                          <p className="text-[10px] text-white/40 mb-1.5">严重程度</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            <GlassButton
+                              variant={severityFilter === null ? 'primary' : 'ghost'}
+                              size="sm"
+                              onClick={() => setSeverityFilter(null)}
+                              className="px-2 py-1 text-[10px]"
+                              active={severityFilter === null}
+                            >
+                              全部
+                            </GlassButton>
+                            {Object.entries(SEVERITY_NAMES).map(([value, label]) => (
+                              <GlassButton
+                                key={value}
+                                variant={severityFilter === value ? 'primary' : 'ghost'}
+                                size="sm"
+                                onClick={() => setSeverityFilter(severityFilter === value ? null : value)}
+                                className={cn(
+                                  "px-2 py-1 text-[10px]",
+                                  severityFilter === value && "shadow-none"
+                                )}
+                                active={severityFilter === value}
+                              >
+                                <span className={cn(
+                                  "w-1.5 h-1.5 rounded-full mr-1.5",
+                                  value === 'mild' && 'bg-emerald-400',
+                                  value === 'moderate' && 'bg-amber-400',
+                                  value === 'severe' && 'bg-rose-400'
+                                )} />
+                                {label}
+                              </GlassButton>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] text-white/40 mb-1.5">疾病类型</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            <GlassButton
+                              variant={diseaseTypeFilter === null ? 'primary' : 'ghost'}
+                              size="sm"
+                              onClick={() => setDiseaseTypeFilter(null)}
+                              className="px-2 py-1 text-[10px]"
+                              active={diseaseTypeFilter === null}
+                            >
+                              全部
+                            </GlassButton>
+                            {Object.entries(DISEASE_TYPE_NAMES).map(([value, label]) => (
+                              <GlassButton
+                                key={value}
+                                variant={diseaseTypeFilter === value ? 'primary' : 'ghost'}
+                                size="sm"
+                                onClick={() => setDiseaseTypeFilter(diseaseTypeFilter === value ? null : value as DiseaseType)}
+                                className="px-2 py-1 text-[10px]"
+                                active={diseaseTypeFilter === value}
+                              >
+                                <span 
+                                  className="w-1.5 h-1.5 rounded-full mr-1.5"
+                                  style={{ backgroundColor: DISEASE_TYPE_COLORS[value as DiseaseType] }}
+                                />
+                                {label}
+                              </GlassButton>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {filteredPathologies.map((pathology: Pathology) => (
                   <motion.div
                     key={pathology.id}
                     className="p-4 bg-white/[0.03] rounded-xl border border-white/[0.05] hover:border-white/10 transition-colors"
@@ -194,12 +330,24 @@ export function RightInfoPanel() {
                   >
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="text-sm font-semibold text-white">{pathology.name}</h4>
-                      <span className={cn(
-                        'px-2 py-0.5 text-[10px] font-medium rounded-full border',
-                        severityColors[pathology.severity]
-                      )}>
-                        {severityLabels[pathology.severity]}
-                      </span>
+                      <div className="flex gap-1">
+                        <span 
+                          className="px-2 py-0.5 text-[9px] font-medium rounded-full border"
+                          style={{ 
+                            color: DISEASE_TYPE_COLORS[pathology.diseaseType],
+                            borderColor: `${DISEASE_TYPE_COLORS[pathology.diseaseType]}50`,
+                            backgroundColor: `${DISEASE_TYPE_COLORS[pathology.diseaseType]}20`
+                          }}
+                        >
+                          {DISEASE_TYPE_NAMES[pathology.diseaseType]}
+                        </span>
+                        <span className={cn(
+                          'px-2 py-0.5 text-[9px] font-medium rounded-full border',
+                          SEVERITY_COLORS[pathology.severity]
+                        )}>
+                          {SEVERITY_NAMES[pathology.severity]}
+                        </span>
+                      </div>
                     </div>
                     <p className="text-xs text-white/60 mb-3">{pathology.description}</p>
                     
@@ -224,10 +372,22 @@ export function RightInfoPanel() {
                   </motion.div>
                 ))}
 
-                {organInfo.commonPathologies.length === 0 && (
+                {filteredPathologies.length === 0 && (
                   <div className="text-center py-8 text-white/40">
                     <AlertTriangle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">暂无病变数据</p>
+                    <p className="text-sm">
+                      {hasActiveFilters ? '没有符合筛选条件的病变' : '暂无病变数据'}
+                    </p>
+                    {hasActiveFilters && (
+                      <GlassButton
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearFilters}
+                        className="mt-3"
+                      >
+                        清除筛选条件
+                      </GlassButton>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -239,7 +399,32 @@ export function RightInfoPanel() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-3"
               >
-                {organInfo.clinicalCases.map((caseItem, index) => (
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="text"
+                    value={caseSearchQuery}
+                    onChange={(e) => setCaseSearchQuery(e.target.value)}
+                    placeholder="搜索病例..."
+                    className="w-full pl-9 pr-8 py-2 bg-white/[0.05] rounded-xl border border-white/[0.08] text-white placeholder-white/40 text-sm focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/30 transition-all"
+                  />
+                  {caseSearchQuery && (
+                    <button
+                      onClick={() => setCaseSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {caseSearchQuery && (
+                  <p className="text-[10px] text-white/40">
+                    找到 {filteredCases.length} 个相关病例
+                  </p>
+                )}
+
+                {filteredCases.map((caseItem, index) => (
                   <motion.div
                     key={caseItem.id}
                     className="p-4 bg-white/[0.03] rounded-xl border border-white/[0.05] hover:border-cyan-500/20 transition-all cursor-pointer group"
@@ -278,10 +463,12 @@ export function RightInfoPanel() {
                   </motion.div>
                 ))}
 
-                {organInfo.clinicalCases.length === 0 && (
+                {filteredCases.length === 0 && (
                   <div className="text-center py-8 text-white/40">
                     <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">暂无临床案例</p>
+                    <p className="text-sm">
+                      {caseSearchQuery ? '没有找到相关病例' : '暂无临床案例'}
+                    </p>
                   </div>
                 )}
               </motion.div>

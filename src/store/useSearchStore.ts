@@ -1,16 +1,31 @@
 import { create } from 'zustand';
 import { pinyin } from 'pinyin-pro';
 import { anatomyStructures } from '../data/anatomyData';
-import { AnatomyStructure } from '../types';
+import { organInfoData } from '../data/organInfoData';
+import { AnatomyStructure, ClinicalCase, Pathology } from '../types';
+
+type SearchResultType = 'structure' | 'pathology' | 'case';
+
+interface SearchResult {
+  id: string;
+  type: SearchResultType;
+  name: string;
+  description: string;
+  structureId?: string;
+  structureName?: string;
+  matchText: string;
+}
 
 interface SearchState {
   searchQuery: string;
-  searchResults: string[];
+  searchResults: SearchResult[];
   highlightedStructureId: string | null;
+  selectedResultId: string | null;
   setSearchQuery: (query: string) => void;
   clearSearch: () => void;
-  selectResult: (id: string) => void;
+  selectResult: (result: SearchResult) => void;
   clearHighlight: () => void;
+  clearSelection: () => void;
 }
 
 const getPinyinFirstLetter = (text: string): string => {
@@ -21,35 +36,95 @@ const getFullPinyin = (text: string): string => {
   return pinyin(text, { toneType: 'none' }).replace(/\s/g, '').toLowerCase();
 };
 
-const searchStructures = (query: string): string[] => {
+const matchQuery = (text: string, query: string): boolean => {
+  const lowerQuery = query.toLowerCase().trim();
+  if (!lowerQuery) return false;
+  
+  const lowerText = text.toLowerCase();
+  const pinyinFirstLetter = getPinyinFirstLetter(text);
+  const fullPinyin = getFullPinyin(text);
+  
+  return lowerText.includes(lowerQuery) || 
+         pinyinFirstLetter.includes(lowerQuery) || 
+         fullPinyin.includes(lowerQuery);
+};
+
+const searchAll = (query: string): SearchResult[] => {
   if (!query.trim()) return [];
   
   const lowerQuery = query.toLowerCase().trim();
-  
-  return anatomyStructures
-    .filter((structure: AnatomyStructure) => {
-      const nameMatch = structure.name.toLowerCase().includes(lowerQuery);
-      const latinNameMatch = structure.latinName.toLowerCase().includes(lowerQuery);
-      const pinyinFirstLetter = getPinyinFirstLetter(structure.name);
-      const fullPinyin = getFullPinyin(structure.name);
-      const pinyinMatch = pinyinFirstLetter.includes(lowerQuery) || fullPinyin.includes(lowerQuery);
-      
-      return nameMatch || latinNameMatch || pinyinMatch;
-    })
-    .map(s => s.id);
+  const results: SearchResult[] = [];
+
+  anatomyStructures.forEach((structure: AnatomyStructure) => {
+    if (matchQuery(structure.name, lowerQuery) || 
+        matchQuery(structure.latinName, lowerQuery)) {
+      results.push({
+        id: structure.id,
+        type: 'structure',
+        name: structure.name,
+        description: structure.latinName,
+        structureId: structure.id,
+        structureName: structure.name,
+        matchText: structure.name,
+      });
+    }
+  });
+
+  organInfoData.forEach((organInfo) => {
+    const structure = anatomyStructures.find(s => s.id === organInfo.structureId);
+    
+    organInfo.commonPathologies.forEach((pathology: Pathology) => {
+      if (matchQuery(pathology.name, lowerQuery) || 
+          matchQuery(pathology.description, lowerQuery) ||
+          pathology.symptoms.some(s => matchQuery(s, lowerQuery))) {
+        results.push({
+          id: pathology.id,
+          type: 'pathology',
+          name: pathology.name,
+          description: pathology.description,
+          structureId: organInfo.structureId,
+          structureName: structure?.name,
+          matchText: pathology.name,
+        });
+      }
+    });
+
+    organInfo.clinicalCases.forEach((caseItem: ClinicalCase) => {
+      if (matchQuery(caseItem.title, lowerQuery) || 
+          matchQuery(caseItem.patientInfo, lowerQuery) ||
+          matchQuery(caseItem.presentation, lowerQuery) ||
+          matchQuery(caseItem.diagnosis, lowerQuery) ||
+          matchQuery(caseItem.treatment, lowerQuery) ||
+          matchQuery(caseItem.outcome, lowerQuery)) {
+        results.push({
+          id: caseItem.id,
+          type: 'case',
+          name: caseItem.title,
+          description: caseItem.presentation,
+          structureId: organInfo.structureId,
+          structureName: structure?.name,
+          matchText: caseItem.title,
+        });
+      }
+    });
+  });
+
+  return results;
 };
 
 export const useSearchStore = create<SearchState>((set) => ({
   searchQuery: '',
   searchResults: [],
   highlightedStructureId: null,
+  selectedResultId: null,
 
   setSearchQuery: (query: string) => {
-    const results = searchStructures(query);
+    const results = searchAll(query);
     set({
       searchQuery: query,
       searchResults: results,
-      highlightedStructureId: null
+      highlightedStructureId: null,
+      selectedResultId: null,
     });
   },
 
@@ -57,19 +132,25 @@ export const useSearchStore = create<SearchState>((set) => ({
     set({
       searchQuery: '',
       searchResults: [],
-      highlightedStructureId: null
+      highlightedStructureId: null,
+      selectedResultId: null,
     });
   },
 
-  selectResult: (id: string) => {
+  selectResult: (result: SearchResult) => {
     set({
-      highlightedStructureId: id,
+      highlightedStructureId: result.structureId || null,
+      selectedResultId: result.id,
       searchQuery: '',
-      searchResults: []
+      searchResults: [],
     });
   },
 
   clearHighlight: () => {
     set({ highlightedStructureId: null });
-  }
+  },
+
+  clearSelection: () => {
+    set({ selectedResultId: null });
+  },
 }));
