@@ -136,3 +136,47 @@ export const ANNOTATION_PRIORITY_NAMES: Record<AnnotationPriority, string> = {
   medium: '重要',
   high: '非常重要'
 };
+
+export interface DissectionStep {
+  id: string;
+  stepNumber: number;
+  title: string;
+  description: string;
+  detailedInstruction: string;
+  targetLayer: AnatomyLayer;
+  highlightStructureIds: string[];
+  cameraView?: CameraView;
+  tips?: string[];
+  safetyNotes?: string[];
+}
+
+export interface DissectionGuide {
+  id: string;
+  title: string;
+  description: string;
+  category: 'abdominal' | 'thoracic' | 'other';
+  estimatedDuration: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  prerequisites: string[];
+  learningObjectives: string[];
+  steps: DissectionStep[];
+  icon: string;
+}
+
+export const GUIDE_CATEGORY_NAMES: Record<string, string> = {
+  abdominal: '腹部解剖',
+  thoracic: '胸腔解剖',
+  other: '其他解剖'
+};
+
+export const DIFFICULTY_NAMES: Record<string, string> = {
+  beginner: '初级',
+  intermediate: '中级',
+  advanced: '高级'
+};
+
+export const DIFFICULTY_COLORS: Record<string, string> = {
+  beginner: '#10B981',
+  intermediate: '#F59E0B',
+  advanced: '#EF4444'
+};

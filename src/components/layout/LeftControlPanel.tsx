@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Layers, ChevronDown, ChevronUp, RotateCcw, MapPin } from 'lucide-react';
+import { Layers, ChevronDown, ChevronUp, RotateCcw, MapPin, BookOpen } from 'lucide-react';
 import { AnatomyLayer, ANATOMY_LAYER_ORDER, LAYER_NAMES, ANNOTATION_COLORS } from '../../types';
 import { useAnatomyStore } from '../../store/useAnatomyStore';
 import { useAnnotationStore } from '../../store/useAnnotationStore';
+import { useDissectionGuideStore } from '../../store/useDissectionGuideStore';
 import { GlassPanel } from '../ui/GlassPanel';
 import { GlassButton } from '../ui/GlassButton';
 import { cn } from '../../lib/utils';
@@ -26,6 +27,7 @@ const layerDescriptions: Record<AnatomyLayer, string> = {
 export function LeftControlPanel() {
   const { currentLayer, layerProgress, setCurrentLayer, peelLayer, restoreLayer, resetToFull, isLayerVisible } = useAnatomyStore();
   const { isAnnotationMode, setAnnotationMode, annotations, setSelectedAnnotationId } = useAnnotationStore();
+  const { setPanelOpen, isPanelOpen, selectedGuide } = useDissectionGuideStore();
 
   const currentIndex = ANATOMY_LAYER_ORDER.indexOf(currentLayer);
 
@@ -109,6 +111,53 @@ export function LeftControlPanel() {
               ))}
             </div>
           )}
+
+          <div className="pt-4 border-t border-white/10">
+            <div className="flex items-center gap-3 pb-3">
+              <div className={cn(
+                'w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200',
+                isPanelOpen
+                  ? 'bg-gradient-to-br from-emerald-500/30 to-teal-500/30'
+                  : 'bg-gradient-to-br from-emerald-500/20 to-teal-500/20'
+              )}>
+                <BookOpen className={cn(
+                  'w-5 h-5 transition-colors duration-200',
+                  isPanelOpen ? 'text-emerald-400' : 'text-emerald-300/70'
+                )} />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-sm font-semibold text-white">解剖引导</h2>
+                <p className="text-[11px] text-white/50">
+                  {selectedGuide
+                    ? `正在学习: ${selectedGuide.title}`
+                    : '标准化流程，一步步学习'}
+                </p>
+              </div>
+            </div>
+
+            <GlassButton
+              variant={isPanelOpen ? 'primary' : 'secondary'}
+              size="sm"
+              className="w-full"
+              active={isPanelOpen}
+              onClick={() => setPanelOpen(!isPanelOpen)}
+            >
+              <BookOpen className="w-4 h-4 mr-2" />
+              {isPanelOpen ? '✓ 引导面板已开启' : '打开解剖引导'}
+            </GlassButton>
+
+            {isPanelOpen && selectedGuide && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-400/20 mt-3"
+              >
+                <p className="text-[11px] text-emerald-200 leading-relaxed">
+                  📚 <span className="font-medium">学习中：</span>请查看右侧引导面板，跟随步骤进行解剖学习。
+                </p>
+              </motion.div>
+            )}
+          </div>
 
           <div className="pt-4 border-t border-white/10">
             <div className="flex items-center gap-3 pb-3">

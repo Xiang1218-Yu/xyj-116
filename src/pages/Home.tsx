@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { MousePointer2, Layers, Info, MapPin } from 'lucide-react';
+import { MousePointer2, Layers, Info, MapPin, BookOpen } from 'lucide-react';
 import { AnatomyScene } from '../components/three/AnatomyScene';
 import { TopNavbar } from '../components/layout/TopNavbar';
 import { LeftControlPanel } from '../components/layout/LeftControlPanel';
@@ -7,6 +7,7 @@ import { RightInfoPanel } from '../components/layout/RightInfoPanel';
 import { ViewControls } from '../components/layout/ViewControls';
 import { QuizPanel } from '../components/layout/QuizPanel';
 import { AnnotationPanel } from '../components/layout/AnnotationPanel';
+import { DissectionGuidePanel } from '../components/layout/DissectionGuidePanel';
 import { useSelectionStore } from '../store/useSelectionStore';
 import { useQuizStore } from '../store/useQuizStore';
 import { useState, useEffect } from 'react';
@@ -36,6 +37,7 @@ export default function Home() {
       <ViewControls />
       <QuizPanel />
       <AnnotationPanel />
+      <DissectionGuidePanel />
       
       {showWelcome && (
         <motion.div
@@ -91,6 +93,11 @@ export default function Home() {
               </div>
               <div className="w-px h-4 bg-white/10" />
               <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <span>解剖引导流程学习</span>
+              </div>
+              <div className="w-px h-4 bg-white/10" />
+              <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-pink-400" />
                 <span>顶部按钮添加标注笔记</span>
               </div>
@@ -109,7 +116,7 @@ export default function Home() {
             transition={{ duration: 0.3 }}
           >
             <div className="glass px-4 py-2 rounded-xl text-xs text-white/50 text-center max-w-lg">
-              💡 提示：点击任意器官查看详情 · 点击顶部「标注」按钮在模型上添加学习笔记，支持颜色分类和重要程度标记
+              💡 提示：点击任意器官查看详情 · 点击左侧「解剖引导」开启标准化流程学习 · 点击顶部「标注」按钮在模型上添加学习笔记
             </div>
           </motion.div>
         )}
