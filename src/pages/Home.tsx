@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { MousePointer2, Layers, Info } from 'lucide-react';
+import { MousePointer2, Layers, Info, MapPin } from 'lucide-react';
 import { AnatomyScene } from '../components/three/AnatomyScene';
 import { TopNavbar } from '../components/layout/TopNavbar';
 import { LeftControlPanel } from '../components/layout/LeftControlPanel';
@@ -89,6 +89,11 @@ export default function Home() {
                 <Info className="w-4 h-4 text-cyan-400" />
                 <span>点击结构查看详情</span>
               </div>
+              <div className="w-px h-4 bg-white/10" />
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-pink-400" />
+                <span>顶部按钮添加标注笔记</span>
+              </div>
             </div>
           </motion.div>
         )}
@@ -103,8 +108,8 @@ export default function Home() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="glass px-4 py-2 rounded-xl text-xs text-white/50 text-center max-w-md">
-              💡 提示：点击任意器官（心脏、肺、肝脏、胃、大脑、肾脏等）查看详细的功能说明、常见病变和真实临床案例
+            <div className="glass px-4 py-2 rounded-xl text-xs text-white/50 text-center max-w-lg">
+              💡 提示：点击任意器官查看详情 · 点击顶部「标注」按钮在模型上添加学习笔记，支持颜色分类和重要程度标记
             </div>
           </motion.div>
         )}

@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, User, HelpCircle, Menu, X, Search, ChevronRight } from 'lucide-react';
+import { Activity, User, HelpCircle, Menu, X, Search, ChevronRight, MapPin } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { BodySystem, SYSTEM_NAMES, AnatomyStructure } from '../../types';
 import { useAnatomyStore } from '../../store/useAnatomyStore';
+import { useAnnotationStore } from '../../store/useAnnotationStore';
 import { GlassButton } from '../ui/GlassButton';
 import { cn } from '../../lib/utils';
 import { useSearchStore } from '../../store/useSearchStore';
@@ -22,6 +23,7 @@ const systemOptions: { id: BodySystem | null; label: string; icon: string }[] = 
 export function TopNavbar() {
   const { activeSystem, setActiveSystem } = useAnatomyStore();
   const { searchQuery, searchResults, setSearchQuery, clearSearch, selectResult } = useSearchStore();
+  const { isAnnotationMode, setAnnotationMode, annotations } = useAnnotationStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -196,6 +198,35 @@ export function TopNavbar() {
 
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-2">
+              <GlassButton
+                variant={isAnnotationMode ? 'primary' : 'ghost'}
+                size="sm"
+                active={isAnnotationMode}
+                onClick={() => setAnnotationMode(!isAnnotationMode)}
+                className={cn(
+                  'relative flex items-center gap-1.5',
+                  isAnnotationMode && 'shadow-lg shadow-pink-500/20'
+                )}
+              >
+                <MapPin className={cn(
+                  'w-4 h-4',
+                  isAnnotationMode ? 'text-pink-300' : 'text-white/70'
+                )} />
+                <span className={cn(
+                  'text-xs',
+                  isAnnotationMode ? 'text-pink-200' : 'text-white/70'
+                )}>
+                  标注
+                </span>
+                {annotations.length > 0 && (
+                  <span className={cn(
+                    'absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center',
+                    isAnnotationMode ? 'bg-pink-500 text-white' : 'bg-cyan-500 text-white'
+                  )}>
+                    {annotations.length}
+                  </span>
+                )}
+              </GlassButton>
               <GlassButton variant="ghost" size="sm">
                 <HelpCircle className="w-4 h-4" />
               </GlassButton>
