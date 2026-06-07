@@ -5,6 +5,7 @@ import { AnatomyStructure, GeometryConfig } from '../../types';
 import { useSelectionStore } from '../../store/useSelectionStore';
 import { useQuizStore } from '../../store/useQuizStore';
 import { useSearchStore } from '../../store/useSearchStore';
+import { useIsolateStore } from '../../store/useIsolateStore';
 
 interface OrganProps {
   structure: AnatomyStructure;
@@ -35,6 +36,7 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
   const { selectedStructureId, setSelectedStructureId, hoveredStructureId, setHoveredStructureId } = useSelectionStore();
   const { isQuizMode, currentQuestion, lastAnswerResult, lastClickedStructureId, submitAnswer, clearLastResult } = useQuizStore();
   const { highlightedStructureId, searchResults, clearHighlight } = useSearchStore();
+  const { isolatedStructureId, isIsolated, otherOrgansMode, isolatedPosition, isolatedRotation, isolatedScale } = useIsolateStore();
   const [hovered, setHovered] = useState(false);
   const [flashEffect, setFlashEffect] = useState<'correct' | 'wrong' | null>(null);
   
@@ -47,6 +49,8 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
   const showTargetReveal = isQuizMode && lastAnswerResult === 'wrong' && isTargetStructure;
   const isSearchHighlighted = highlightedStructureId === structure.id;
   const isInSearchResults = searchResults.includes(structure.id);
+  const isCurrentIsolated = isolatedStructureId === structure.id;
+  const isOtherOrganInIsolateMode = isIsolated && !isCurrentIsolated;
 
   useEffect(() => {
     if (showCorrectHighlight) {
@@ -61,6 +65,15 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
   }, [showCorrectHighlight, showWrongHighlight]);
 
   const geometry = useMemo(() => getGeometry(structure.geometry.type), [structure.geometry.type]);
+
+  const effectiveOpacity = useMemo(() => {
+    if (isOtherOrganInIsolateMode) {
+      if (otherOrgansMode === 'hidden') return 0;
+      if (otherOrgansMode === 'dimmed') return 0.1;
+    }
+    if (isCurrentIsolated) return 1;
+    return opacity;
+  }, [opacity, isOtherOrganInIsolateMode, isCurrentIsolated, otherOrgansMode]);
 
   const material = useMemo(() => {
     let emissiveColor = '#000000';
@@ -84,25 +97,52 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
     } else if (isInSearchResults) {
       emissiveColor = '#22c55e';
       emissiveIntensity = 0.4;
-    } else if (isSelected) {
+    } else if (isSelected || isCurrentIsolated) {
       emissiveColor = '#00bcd4';
-      emissiveIntensity = 0.6;
+      emissiveIntensity = isCurrentIsolated ? 0.4 : 0.6;
     } else if (isHovered || hovered) {
       emissiveColor = '#1e88e5';
       emissiveIntensity = 0.3;
     }
 
+    if (isOtherOrganInIsolateMode && otherOrgansMode === 'dimmed') {
+      baseColor = '#334155';
+      emissiveColor = '#000000';
+      emissiveIntensity = 0;
+    }
+
     const mat = new THREE.MeshStandardMaterial({
       color: baseColor,
       transparent: true,
-      opacity: opacity,
+      opacity: effectiveOpacity,
       roughness: 0.4,
       metalness: 0.1,
       emissive: emissiveColor,
       emissiveIntensity: emissiveIntensity,
     });
     return mat;
-  }, [structure.geometry.color, opacity, isSelected, isHovered, hovered, flashEffect, showCorrectHighlight, showWrongHighlight, showTargetReveal, isSearchHighlighted, isInSearchResults]);
+  }, [structure.geometry.color, effectiveOpacity, isSelected, isHovered, hovered, flashEffect, showCorrectHighlight, showWrongHighlight, showTargetReveal, isSearchHighlighted, isInSearchResults, isCurrentIsolated, isOtherOrganInIsolateMode, otherOrgansMode]);
+
+  const finalPosition = useMemo(() => {
+    if (isCurrentIsolated) {
+      return isolatedPosition;
+    }
+    return structure.geometry.position;
+  }, [isCurrentIsolated, isolatedPosition, structure.geometry.position]);
+
+  const finalRotation = useMemo(() => {
+    if (isCurrentIsolated) {
+      return isolatedRotation;
+    }
+    return structure.geometry.rotation || [0, 0, 0];
+  }, [isCurrentIsolated, isolatedRotation, structure.geometry.rotation]);
+
+  const finalScale = useMemo(() => {
+    if (isCurrentIsolated) {
+      return isolatedScale;
+    }
+    return structure.geometry.scale;
+  }, [isCurrentIsolated, isolatedScale, structure.geometry.scale]);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -124,7 +164,7 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
         const scale = 1 + Math.sin(state.clock.getElapsedTime() * 2.5) * 0.02;
         meshRef.current.scale.setScalar(scale);
         meshRef.current.position.x = 0;
-      } else if (isSelected || isHovered || hovered) {
+      } else if ((isSelected || isHovered || hovered) && !isCurrentIsolated) {
         const scale = 1 + Math.sin(state.clock.getElapsedTime() * 3) * 0.03;
         meshRef.current.scale.setScalar(scale);
         meshRef.current.position.x = 0;
@@ -134,13 +174,14 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
       }
     }
     
-    if (groupRef.current && structure.layer === 'organ' && structure.id === 'heart' && !flashEffect && !showCorrectHighlight && !showWrongHighlight && !isSearchHighlighted) {
+    if (groupRef.current && structure.layer === 'organ' && structure.id === 'heart' && !flashEffect && !showCorrectHighlight && !showWrongHighlight && !isSearchHighlighted && !isCurrentIsolated) {
       const pulse = 1 + Math.sin(state.clock.getElapsedTime() * 2) * 0.05;
       groupRef.current.scale.setScalar(pulse);
     }
   });
 
   if (!visible) return null;
+  if (isOtherOrganInIsolateMode && otherOrgansMode === 'hidden') return null;
 
   const handleClick = (e: any) => {
     e.stopPropagation();
@@ -182,14 +223,12 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
     document.body.style.cursor = 'auto';
   };
 
-  const rotation = structure.geometry.rotation || [0, 0, 0];
-
   return (
     <group
       ref={groupRef}
-      position={structure.geometry.position}
-      rotation={rotation as [number, number, number]}
-      scale={structure.geometry.scale}
+      position={finalPosition as [number, number, number]}
+      rotation={finalRotation as [number, number, number]}
+      scale={finalScale as [number, number, number]}
     >
       <mesh
         ref={meshRef}
@@ -198,8 +237,8 @@ export function Organ({ structure, visible, opacity }: OrganProps) {
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
-        castShadow
-        receiveShadow
+        castShadow={!isOtherOrganInIsolateMode}
+        receiveShadow={!isOtherOrganInIsolateMode}
       />
       {structure.geometry.type === 'ellipsoid' && (
         <mesh

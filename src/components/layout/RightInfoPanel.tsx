@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Info, AlertTriangle, BookOpen, ChevronRight, User, FileText } from 'lucide-react';
+import { X, Info, AlertTriangle, BookOpen, ChevronRight, User, FileText, Maximize2, Minimize2, Eye, EyeOff, Sun } from 'lucide-react';
 import { useSelectionStore } from '../../store/useSelectionStore';
 import { getStructureById } from '../../data/anatomyData';
 import { getOrganInfoByStructureId } from '../../data/organInfoData';
@@ -9,6 +9,7 @@ import { GlassPanel } from '../ui/GlassPanel';
 import { GlassButton } from '../ui/GlassButton';
 import { TabSwitcher } from '../ui/TabSwitcher';
 import { cn } from '../../lib/utils';
+import { useIsolateStore, OtherOrgansMode } from '../../store/useIsolateStore';
 
 const severityColors = {
   mild: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
@@ -24,10 +25,40 @@ const severityLabels = {
 
 export function RightInfoPanel() {
   const { selectedStructureId, clearSelection } = useSelectionStore();
+  const { isIsolated, isolatedStructureId, isolate, reset: resetIsolation, otherOrgansMode, toggleOtherOrgansMode } = useIsolateStore();
   const [activeTab, setActiveTab] = useState('function');
 
   const structure = selectedStructureId ? getStructureById(selectedStructureId) : null;
   const organInfo = selectedStructureId ? getOrganInfoByStructureId(selectedStructureId) : null;
+
+  const isCurrentIsolated = isIsolated && isolatedStructureId === selectedStructureId;
+
+  const handleIsolate = () => {
+    if (!structure) return;
+    isolate(
+      structure.id,
+      structure.geometry.position,
+      structure.geometry.rotation || [0, 0, 0],
+      structure.geometry.scale
+    );
+  };
+
+  const handleReset = () => {
+    resetIsolation();
+  };
+
+  const handleClose = () => {
+    if (isCurrentIsolated) {
+      resetIsolation();
+    }
+    clearSelection();
+  };
+
+  const otherOrgansModeConfig: Record<OtherOrgansMode, { label: string; icon: JSX.Element }> = {
+    dimmed: { label: '其他器官变暗', icon: <Sun className="w-4 h-4" /> },
+    hidden: { label: '其他器官隐藏', icon: <EyeOff className="w-4 h-4" /> },
+    normal: { label: '其他器官正常', icon: <Eye className="w-4 h-4" /> },
+  };
 
   const tabs = [
     { id: 'function', label: '功能说明', icon: <Info className="w-4 h-4" /> },
@@ -58,15 +89,48 @@ export function RightInfoPanel() {
               </div>
               <p className="text-xs text-white/50 italic">{structure?.latinName}</p>
             </div>
-            <GlassButton
-              variant="ghost"
-              size="sm"
-              onClick={clearSelection}
-              className="p-2"
-            >
-              <X className="w-4 h-4" />
-            </GlassButton>
+            <div className="flex items-center gap-1">
+              <GlassButton
+                variant="ghost"
+                size="sm"
+                onClick={isCurrentIsolated ? handleReset : handleIsolate}
+                className="p-2"
+                title={isCurrentIsolated ? '归位 (ESC)' : '分离查看'}
+              >
+                {isCurrentIsolated ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </GlassButton>
+              {isCurrentIsolated && (
+                <GlassButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleOtherOrgansMode}
+                  className="p-2"
+                  title={otherOrgansModeConfig[otherOrgansMode].label}
+                >
+                  {otherOrgansModeConfig[otherOrgansMode].icon}
+                </GlassButton>
+              )}
+              <GlassButton
+                variant="ghost"
+                size="sm"
+                onClick={handleClose}
+                className="p-2"
+              >
+                <X className="w-4 h-4" />
+              </GlassButton>
+            </div>
           </div>
+
+          {isCurrentIsolated && (
+            <div className="px-5 mb-3 flex-shrink-0">
+              <div className="p-3 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl border border-cyan-500/20">
+                <p className="text-xs text-cyan-400 font-medium mb-1">器官分离模式</p>
+                <p className="text-[11px] text-white/60">
+                  拖拽旋转 · 滚轮缩放 · ESC 归位
+                </p>
+              </div>
+            </div>
+          )}
 
           <TabSwitcher
             tabs={tabs}

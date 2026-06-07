@@ -24,3 +24,8 @@ export const useSelectionStore = create<SelectionState>((set) => ({
     set({ selectedStructureId: null, hoveredStructureId: null });
   }
 }));
+
+if (import.meta.env.DEV) {
+  // @ts-expect-error 开发环境下暴露store到window便于调试
+  window.useSelectionStore = useSelectionStore;
+}
