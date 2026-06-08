@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, CheckCircle, XCircle, Lightbulb, SkipForward, RotateCcw, Trophy, Target, Flame } from 'lucide-react';
 import { useQuizStore } from '../../store/useQuizStore';
-import { getStructureById } from '../../data/anatomyData';
+import { anatomyStructureRepository } from '../../data/repositories';
 import { GlassPanel } from '../ui/GlassPanel';
 import { GlassButton } from '../ui/GlassButton';
 import { cn } from '../../lib/utils';
@@ -55,7 +55,7 @@ export function QuizPanel() {
   }, [lastAnswerResult]);
 
   const targetStructure = currentQuestion
-    ? getStructureById(currentQuestion.targetStructureId)
+    ? anatomyStructureRepository.findById(currentQuestion.targetStructureId)
     : null;
 
   const accuracy = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;

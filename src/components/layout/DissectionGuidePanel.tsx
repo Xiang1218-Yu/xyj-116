@@ -9,12 +9,15 @@ import { GlassPanel } from '../ui/GlassPanel';
 import { GlassButton } from '../ui/GlassButton';
 import { TabSwitcher } from '../ui/TabSwitcher';
 import { cn } from '../../lib/utils';
-import { useDissectionGuideStore, dissectionGuides } from '../../store/useDissectionGuideStore';
+import { useDissectionGuideStore } from '../../store/useDissectionGuideStore';
 import { 
   LAYER_NAMES, DIFFICULTY_NAMES, DIFFICULTY_COLORS,
   GUIDE_CATEGORY_NAMES 
 } from '../../types';
-import { anatomyStructures } from '../../data/anatomyData';
+import {
+  anatomyStructureRepository,
+  dissectionGuideRepository,
+} from '../../data/repositories';
 
 type PanelView = 'list' | 'detail' | 'guide';
 
@@ -47,9 +50,10 @@ export function DissectionGuidePanel() {
   const currentStep = getCurrentStep();
   const progress = getProgress();
 
+  const allGuides = dissectionGuideRepository.findAll();
   const filteredGuides = activeTab === 'all' 
-    ? dissectionGuides 
-    : dissectionGuides.filter(g => g.category === activeTab);
+    ? allGuides 
+    : allGuides.filter(g => g.category === activeTab);
 
   const handleStartGuide = useCallback((guideId: string) => {
     startGuide(guideId);
@@ -79,7 +83,7 @@ export function DissectionGuidePanel() {
 
   const getHighlightedStructureNames = (ids: string[]) => {
     return ids
-      .map(id => anatomyStructures.find(s => s.id === id)?.name)
+      .map(id => anatomyStructureRepository.findById(id)?.name)
       .filter(Boolean)
       .join('、');
   };

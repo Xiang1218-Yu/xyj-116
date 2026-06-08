@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { Organ } from './Organ';
 import { OrganLabel } from './OrganLabel';
-import { anatomyStructures } from '../../data/anatomyData';
+import { anatomyStructureRepository } from '../../data/repositories';
 import { useAnatomyStore } from '../../store/useAnatomyStore';
 import { useLabelStore } from '../../store/useLabelStore';
 import { useSelectionStore } from '../../store/useSelectionStore';
 import { useIsolateStore } from '../../store/useIsolateStore';
-import { AnatomyLayer, ANATOMY_LAYER_ORDER, BodySystem } from '../../types';
+import { AnatomyLayer, ANATOMY_LAYER_ORDER, BodySystem, AnatomyStructure } from '../../types';
 
 export function HumanBody() {
   const { currentLayer, activeSystem, isLayerVisible } = useAnatomyStore();
@@ -24,7 +24,7 @@ export function HumanBody() {
     return 0.15;
   };
 
-  const isStructureVisible = (structure: typeof anatomyStructures[0]): boolean => {
+  const isStructureVisible = (structure: AnatomyStructure): boolean => {
     if (!isLayerVisible(structure.layer)) return false;
     
     if (activeSystem !== null && structure.system !== activeSystem) {
@@ -40,7 +40,7 @@ export function HumanBody() {
     return selectedStructureId === structureId;
   };
 
-  const getLabelPosition = (structure: typeof anatomyStructures[0]): [number, number, number] => {
+  const getLabelPosition = (structure: AnatomyStructure): [number, number, number] => {
     if (isIsolated && isolatedStructureId === structure.id) {
       return isolatedPosition;
     }
@@ -48,13 +48,14 @@ export function HumanBody() {
   };
 
   const renderedStructures = useMemo(() => {
-    return anatomyStructures
-      .filter(structure => isStructureVisible(structure))
+    return anatomyStructureRepository
+      .findAll()
+      .filter((structure: AnatomyStructure) => isStructureVisible(structure))
       .sort((a, b) => {
         const indexA = ANATOMY_LAYER_ORDER.indexOf(a.layer);
         const indexB = ANATOMY_LAYER_ORDER.indexOf(b.layer);
         return indexB - indexA;
-      });
+      }) as AnatomyStructure[];
   }, [currentLayer, activeSystem, isLayerVisible]);
 
   return (

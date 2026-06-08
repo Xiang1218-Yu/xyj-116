@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { pinyin } from 'pinyin-pro';
-import { anatomyStructures } from '../data/anatomyData';
-import { organInfoData } from '../data/organInfoData';
+import {
+  anatomyStructureRepository,
+  organInfoRepository,
+} from '../data/repositories';
 import { AnatomyStructure, ClinicalCase, Pathology } from '../types';
 
 type SearchResultType = 'structure' | 'pathology' | 'case';
@@ -55,7 +57,8 @@ const searchAll = (query: string): SearchResult[] => {
   const lowerQuery = query.toLowerCase().trim();
   const results: SearchResult[] = [];
 
-  anatomyStructures.forEach((structure: AnatomyStructure) => {
+  const allStructures = anatomyStructureRepository.findAll();
+  allStructures.forEach((structure: AnatomyStructure) => {
     if (matchQuery(structure.name, lowerQuery) || 
         matchQuery(structure.latinName, lowerQuery)) {
       results.push({
@@ -70,8 +73,9 @@ const searchAll = (query: string): SearchResult[] => {
     }
   });
 
-  organInfoData.forEach((organInfo) => {
-    const structure = anatomyStructures.find(s => s.id === organInfo.structureId);
+  const allOrganInfo = organInfoRepository.findAll();
+  allOrganInfo.forEach((organInfo) => {
+    const structure = anatomyStructureRepository.findById(organInfo.structureId);
     
     organInfo.commonPathologies.forEach((pathology: Pathology) => {
       if (matchQuery(pathology.name, lowerQuery) || 

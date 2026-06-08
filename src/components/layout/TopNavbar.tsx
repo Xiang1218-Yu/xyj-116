@@ -1,14 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, User, HelpCircle, Menu, X, Search, ChevronRight, MapPin, Tag, BookOpen, AlertTriangle, Scan, Eye, EyeOff } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { BodySystem, SYSTEM_NAMES, AnatomyStructure } from '../../types';
+import { BodySystem, SYSTEM_NAMES } from '../../types';
 import { useAnatomyStore } from '../../store/useAnatomyStore';
 import { useAnnotationStore } from '../../store/useAnnotationStore';
 import { useLabelStore } from '../../store/useLabelStore';
 import { GlassButton } from '../ui/GlassButton';
 import { cn } from '../../lib/utils';
 import { useSearchStore } from '../../store/useSearchStore';
-import { getStructureById } from '../../data/anatomyData';
 import { useSelectionStore } from '../../store/useSelectionStore';
 
 const systemOptions: { id: BodySystem | null; label: string; icon: string }[] = [

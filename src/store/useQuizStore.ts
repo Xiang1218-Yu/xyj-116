@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { QuizQuestion, getRandomQuestion } from '../data/quizData';
+import { QuizQuestion } from '../data/quizData';
+import { quizQuestionRepository } from '../data/repositories';
 
 export type AnswerResult = 'correct' | 'wrong' | null;
 
@@ -86,7 +87,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
 
   nextQuestion: () => {
     const { answeredQuestionIds } = get();
-    const nextQ = getRandomQuestion(answeredQuestionIds);
+    const nextQ = quizQuestionRepository.getRandom(answeredQuestionIds);
     
     set({
       currentQuestion: nextQ,

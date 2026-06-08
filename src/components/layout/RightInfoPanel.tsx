@@ -2,8 +2,10 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Info, AlertTriangle, BookOpen, ChevronRight, User, FileText, Maximize2, Minimize2, Eye, EyeOff, Sun, Search, Filter, XCircle } from 'lucide-react';
 import { useSelectionStore } from '../../store/useSelectionStore';
-import { getStructureById } from '../../data/anatomyData';
-import { getOrganInfoByStructureId } from '../../data/organInfoData';
+import {
+  anatomyStructureRepository,
+  organInfoRepository,
+} from '../../data/repositories';
 import { SYSTEM_NAMES, LAYER_NAMES, SEVERITY_COLORS, SEVERITY_NAMES, DISEASE_TYPE_NAMES, DISEASE_TYPE_COLORS, DiseaseType, Pathology } from '../../types';
 import { GlassPanel } from '../ui/GlassPanel';
 import { GlassButton } from '../ui/GlassButton';
@@ -20,8 +22,8 @@ export function RightInfoPanel() {
   const [caseSearchQuery, setCaseSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
-  const structure = selectedStructureId ? getStructureById(selectedStructureId) : null;
-  const organInfo = selectedStructureId ? getOrganInfoByStructureId(selectedStructureId) : null;
+  const structure = selectedStructureId ? anatomyStructureRepository.findById(selectedStructureId) : null;
+  const organInfo = selectedStructureId ? organInfoRepository.findByStructureId(selectedStructureId) : null;
 
   const isCurrentIsolated = isIsolated && isolatedStructureId === selectedStructureId;
 

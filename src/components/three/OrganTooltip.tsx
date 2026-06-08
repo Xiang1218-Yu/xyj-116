@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSelectionStore } from '../../store/useSelectionStore';
-import { getStructureById } from '../../data/anatomyData';
-import { getShortFunctionByStructureId } from '../../data/organInfoData';
+import {
+  anatomyStructureRepository,
+  organInfoRepository,
+} from '../../data/repositories';
 import { useIsolateStore } from '../../store/useIsolateStore';
 
 export function OrganTooltip() {
@@ -30,10 +32,10 @@ export function OrganTooltip() {
 
   if (!hoveredStructureId) return null;
 
-  const structure = getStructureById(hoveredStructureId);
+  const structure = anatomyStructureRepository.findById(hoveredStructureId);
   if (!structure) return null;
 
-  const shortFunction = getShortFunctionByStructureId(hoveredStructureId);
+  const shortFunction = organInfoRepository.getShortFunctionByStructureId(hoveredStructureId);
   const organColor = structure.geometry.color;
 
   const tooltipX = mousePosition.x + 16;

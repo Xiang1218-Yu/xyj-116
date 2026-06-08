@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { DissectionGuide, DissectionStep } from '../types';
-import { dissectionGuides, getDissectionGuideById } from '../data/dissectionGuides';
+import { dissectionGuideRepository } from '../data/repositories';
 import { useAnatomyStore } from './useAnatomyStore';
 import { useSelectionStore } from './useSelectionStore';
 
@@ -82,14 +82,14 @@ export const useDissectionGuideStore = create<DissectionGuideState>((set, get) =
   },
 
   selectGuide: (guideId: string) => {
-    const guide = getDissectionGuideById(guideId);
+    const guide = dissectionGuideRepository.findById(guideId);
     if (guide) {
       set({ selectedGuide: guide, currentStepIndex: 0, completedSteps: new Set() });
     }
   },
 
   startGuide: (guideId: string) => {
-    const guide = getDissectionGuideById(guideId);
+    const guide = dissectionGuideRepository.findById(guideId);
     if (guide) {
       set({ 
         selectedGuide: guide, 
@@ -226,5 +226,3 @@ export const useDissectionGuideStore = create<DissectionGuideState>((set, get) =
     }
   }
 }));
-
-export { dissectionGuides };
